@@ -1,1 +1,1 @@
-# MathsHonours
+# Maths Honours
