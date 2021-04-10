@@ -6,15 +6,19 @@ clear all;
 % Define problem parameters
 t_0 = 0;
 t_end = 15;
-xy_0 = [20; 20];            % x and y at time 0
+x_0 = 20;
+y_0 = 20;
+xy_0 = [x_0; y_0]; 
 
 % Solve using ode45
-[t, xy] = ode45(@lotka, [t_0 t_end], xy_0);
+[t_vals, xy] = ode45(@lotka, [t_0 t_end], xy_0);
+x_vals = xy(:, 1);
+y_vals = xy(:, 2);
 
 % Plotting
 figure(1), clf, hold on
-plot(t, xy(:, 1), 'Linewidth', 2)
-plot(t, xy(:, 2), 'Linewidth', 2)
+plot(t_vals, x_vals, 'Linewidth', 2)
+plot(t_vals, y_vals, 'Linewidth', 2)
 title('Lotka-Volterra Model')
 xlabel('Time (t)')
 ylabel('Population Size')
@@ -35,7 +39,9 @@ k = 0.2;
 
 % System of equations - two first order ODEs
 % xy = [x; y]; 
-xy_dash = [xy(1) * (alpha - beta*xy(2)); 
-    xy(2) * (delta*xy(1) - gamma - k)];
+x = xy(1);
+y = xy(2);
+xy_dash = [x * (alpha - beta*y); 
+           y * (delta*x - gamma - k)];
 
 end
