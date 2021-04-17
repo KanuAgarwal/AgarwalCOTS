@@ -2,10 +2,11 @@
 clear all
 
 % Define problem parameters
-alpha_x = 0.1;         % interaction constant in equation for coral
-alpha_y = 0.01;         % interaction constant in equation for COTS
-alpha_S = 1;            % constant in COTS survival term
-beta_S = 1;             % constant in COTS survival term      
+alpha_x = 1;            % growth rate of coral 
+beta_x = 0.15;          % mortality rate of coral from starfish
+alpha_y = 0.02;         % natural mortality rate of starfish
+alpha_S = 1.5;            % constant in starfish survival term
+beta_S = 1;             % constant in starfish survival term      
 num_reefs = 2;          % number of reefs      
 
 % Initialise time vector
@@ -16,30 +17,34 @@ t_vec = t_0:1:t_end;
 % Initialise a vector for each reef area
 A = [100; 70];                              % reef area
 
-% Initialise matrices for coral and COTS
+% Initialise matrices for coral and starfish
 x = zeros(num_reefs, length(t_vec));        % coral cover
-y = zeros(num_reefs, length(t_vec));        % COTS
+y = zeros(num_reefs, length(t_vec));        % starfish
 x_0 = [20; 30];                             % initial coral cover
-y_0 = [15; 25];                             % initial COTS 
+y_0 = [15; 25];                             % initial starfish 
 x(:, 1) = x_0;
 y(:, 1) = y_0;
 
 % Initialise matrix for control effort
-k_0 = [0.3; 0.3]; 
-k = k_0 * ones(1, length(t_vec)-1); % control effort
+k_0 = [5; 3]; 
+k = k_0 * ones(1, length(t_vec)-1);         % control effort
 
-% Initialise matrices for larval recruitment and survival for coral
-r_x = 1;
-c_x = [0,   1;                              % coral larval dispersal
-       0.5, 0.5];       
+% Larval recruitment and survival for coral
+r_x = 5;                                    % production rate
+c_x = [0,   0.2;
+       0.2, 0.1];                           % coral larval dispersal
+% We need to account for the percentage that die by floating off
+c_x_dead = 1 - sum(c_x, 2);                     
 R = zeros(num_reefs, length(t_vec));        % coral larval recruitment
 phi = zeros(num_reefs, length(t_vec));      % actual larval recruitment
 
-% Initialise matrices for larval recruitment for COTS
-r_y = 1;
-c_y_0 = [20; 10];
-c_y = c_y_0 * ones(1, length(t_vec));       % COTS larval dispersal
-S = zeros(num_reefs, length(t_vec));        % COTS larval recruitment
+% Larval recruitment for starfish
+r_y = 10;                                   % production rate
+c_y = [0.5, 0.4;
+       0.3, 0.6];                           % starfish larval dispersal
+% We need to account for the percentage that die by floating off
+c_y_dead = 1 - sum(c_y, 2); 
+S = zeros(num_reefs, length(t_vec));        % starfish larval recruitment
 
 
 %% Solve
@@ -47,19 +52,15 @@ S = zeros(num_reefs, length(t_vec));        % COTS larval recruitment
 for t = t_start:t_end
     % Loop over each reef
     for i = 1:num_reefs
-        % Calculate COTS larval recruitment
-        sum_S = 0;
+        % Calculate starfish larval recruitment
         for j = 1:num_reefs
-            sum_S = sum_S + c_y(j, i) * y(j, t) * A(j) * r_y;
+            S(i, t+1) = S(i, t+1) + c_y(j, i) * y(j, t) * r_y;
         end
-        S(i, t+1) = 1/A(i) * sum_S;
         
         % Calculate coral larval recuitment
-        sum_R = 0;
         for j = 1:num_reefs
-            sum_R = sum_R + c_x(j, i) * x(j, t) * A(j) * r_x;
+            R(i, t+1) = R(i, t+1) + c_x(j, i) * x(j, t) * r_x;
         end
-        R(i, t+1) = 1/A(i) * sum_R;        
         
         % Calculate coral settlement based on area left on reef
         if R(i, t+1) <= (A(i) - x(i, t))
@@ -74,8 +75,9 @@ for t = t_start:t_end
         end
         
         % Calculate the population for the next year
-        x(i, t+1) = x(i, t) * (1 - alpha_x * y(i, t)) + phi(i, t+1);
-        y(i, t+1) = y(i, t) * (1 - alpha_y * x(i, t) - k(i, t)) ...
+        x(i, t+1) = x(i, t) * (alpha_x - beta_x * y(i, t)) ...
+                        + phi(i, t+1);
+        y(i, t+1) = y(i, t) * (1 - alpha_y) - k(i, t) ...
                         + (alpha_S * S(i, t+1))/(1 + beta_S * S(i, t+1));
         
         % Check they aren't less than zero
@@ -98,5 +100,5 @@ for i = 1:num_reefs
     xlabel('Time (in years)', 'Interpreter', 'Latex', 'Fontsize', 12)
     ylabel('Population Size', 'Interpreter', 'Latex', 'Fontsize', 12)
     title(['Reef ', num2str(i)], 'Interpreter', 'Latex', 'Fontsize', 13)
-    legend('Coral Cover', 'COTS')
+    legend('Coral Cover (sqm)', 'Starfish (no.)')
 end
