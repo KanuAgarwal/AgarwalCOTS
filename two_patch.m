@@ -3,16 +3,16 @@ clear all
 
 % Define problem parameters
 alpha_x = 1;            % growth rate of coral 
-beta_x = 0.15;          % mortality rate of coral from starfish
-alpha_y = 0.02;         % natural mortality rate of starfish
-alpha_S = 1.5;            % constant in starfish survival term
+beta_x = 0.08;          % mortality rate of coral from starfish
+alpha_y = 0.01;         % natural mortality rate of starfish
+alpha_S = 2;            % constant in starfish survival term
 beta_S = 1;             % constant in starfish survival term      
 num_reefs = 2;          % number of reefs      
 
 % Initialise time vector
 t_0 = 0;
 t_start = 1;
-t_end = 20;                                 % time in years
+t_end = 10;                                 % time in years
 t_vec = t_0:1:t_end;
 % Initialise a vector for each reef area
 A = [100; 70];                              % reef area
@@ -26,11 +26,11 @@ x(:, 1) = x_0;
 y(:, 1) = y_0;
 
 % Initialise matrix for control effort
-k_0 = [5; 3]; 
-k = k_0 * ones(1, length(t_vec)-1);         % control effort
+k_0 = [3; 5]; 
+k = zeros(1, length(t_vec)-1);              % control effort
 
 % Larval recruitment and survival for coral
-r_x = 5;                                    % production rate
+r_x = 7;                                    % production rate
 c_x = [0,   0.2;
        0.2, 0.1];                           % coral larval dispersal
 % We need to account for the percentage that die by floating off
@@ -39,9 +39,9 @@ R = zeros(num_reefs, length(t_vec));        % coral larval recruitment
 phi = zeros(num_reefs, length(t_vec));      % actual larval recruitment
 
 % Larval recruitment for starfish
-r_y = 10;                                   % production rate
-c_y = [0.5, 0.4;
-       0.3, 0.6];                           % starfish larval dispersal
+r_y = 10;                                    % production rate
+c_y = [0.1, 0.4;
+       0.3, 0.2];                           % starfish larval dispersal
 % We need to account for the percentage that die by floating off
 c_y_dead = 1 - sum(c_y, 2); 
 S = zeros(num_reefs, length(t_vec));        % starfish larval recruitment
@@ -70,8 +70,8 @@ for t = t_start:t_end
         end
         
         % Decide on control effort 
-        if y(i, t) < 5
-            k(i, t) = 0;
+        if y(i, t) > 5
+            k(i, t) = k_0(i);
         end
         
         % Calculate the population for the next year
