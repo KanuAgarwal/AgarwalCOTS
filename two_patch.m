@@ -13,7 +13,7 @@ num_reefs = 2;          % number of reefs
 % Initialise time vector
 t_0 = 0;
 t_start = 1;
-t_end = 10;                                 % time in years
+t_end = 15;                                 % time in years
 t_vec = t_0:1:t_end;
 
 % Initialise a vector for each reef area
@@ -30,7 +30,7 @@ x(:, 1) = x_0;
 y(:, 1) = y_0;
 
 % Initialise matrix for control effort - note for now this is percentage
-k_0 = [0.2; 0.1]; 
+k_0 = [0.4; 0.2]; 
 k = k_0 * ones(1, length(t_vec)-1);         % control effort
 
 % Larval recruitment and survival for coral
@@ -117,26 +117,53 @@ for t = t_start:t_end
 end
 
 
-%% Plotting
+%% Plotting - No Control Effort
+% % Predator and prey populations over time
+% figure(1), clf, hold on
+% for i = 1:num_reefs
+%     subplot(1, num_reefs, i), hold on
+%     plot(t_vec, x(i, :), '-o', 'Linewidth', 1.5)
+%     plot(t_vec, y(i, :), '-o', 'Linewidth', 1.5)
+%     yline(A(i), 'k--')
+%     xlabel('Time (years)', 'Interpreter', 'Latex', 'Fontsize', 12)
+%     ylabel('Population size', 'Interpreter', 'Latex', 'Fontsize', 12)
+%     title(['Reef ', num2str(i)], 'Interpreter', 'Latex', 'Fontsize', 13) 
+%     if i == 1
+%         legend('Coral cover (m^2)', 'No. of starfish', 'Location', 'NorthWest')
+%         ylim([0 300])
+%     end
+%     if i == 2
+%        ylim([0 80]) 
+%     end
+% end
+% 
+% % Predator-prey phase plane
+% figure(2), clf, hold on
+% for i = 1:num_reefs
+%     subplot(1, num_reefs, i), hold on
+%     plot(x(i, :), y(i, :), '-', 'Linewidth', 1)
+%     xlabel('Coral cover ($m^2$)', 'Interpreter', 'Latex', 'Fontsize', 12)
+%     ylabel('Number of starfish', 'Interpreter', 'Latex', 'Fontsize', 12)
+%     title(['Reef ', num2str(i)], 'Interpreter', 'Latex', 'Fontsize', 13)
+%     xlim([0 max(x(i, :))+10])
+% end
+
+%% Plotting - Control Effort
 % Predator and prey populations over time
-figure(1), clf, hold on
+figure(3), clf, hold on
 for i = 1:num_reefs
     subplot(1, num_reefs, i), hold on
     plot(t_vec, x(i, :), '-o', 'Linewidth', 1.5)
     plot(t_vec, y(i, :), '-o', 'Linewidth', 1.5)
-    xlabel('Time (in years)', 'Interpreter', 'Latex', 'Fontsize', 12)
-    ylabel('Population Size', 'Interpreter', 'Latex', 'Fontsize', 12)
-    title(['Reef ', num2str(i)], 'Interpreter', 'Latex', 'Fontsize', 13)
-    legend('Coral Cover (sqm)', 'Starfish (no.)', 'Location', 'NorthWest')
+    yline(A(i), 'k--')
+    xlabel('Time (years)', 'Interpreter', 'Latex', 'Fontsize', 12)
+    ylabel('Population size', 'Interpreter', 'Latex', 'Fontsize', 12)
+    title(['Reef ', num2str(i)], 'Interpreter', 'Latex', 'Fontsize', 13) 
+    if i == 1
+        legend('Coral cover (m^2)', 'No. of starfish', 'Location', 'NorthWest')
+        ylim([0 250])
+    end
+    if i == 2
+       ylim([0 80]) 
+    end
 end
-
-% Predator-prey phase plane
-figure(2), clf, hold on
-for i = 1:num_reefs
-    plot(x(i, :), y(i, :), '-', 'Linewidth', 1)
-end
-xlabel('Coral cover (sqm)', 'Interpreter', 'Latex', 'Fontsize', 12)
-ylabel('Number of starfish', 'Interpreter', 'Latex', 'Fontsize', 12)
-title('Predator-Prey Phase Plane', 'Interpreter', 'Latex', 'Fontsize', 13)
-legend('Reef 1', 'Reef 2')
-xlim([0 max(max(x))+20])
