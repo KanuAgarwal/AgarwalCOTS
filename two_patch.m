@@ -12,7 +12,7 @@ num_reefs = 2;          % number of reefs
 % Initialise time vector
 t_0 = 0;
 t_start = 1;
-t_end = 50;             % time in years
+t_end = 15;             % time in years
 t_vec = t_0:1:t_end;
 
 % Initialise vectors for carrying capacities
@@ -34,7 +34,7 @@ k_0 = [0; 0];
 k = k_0 * ones(1, length(t_vec)-1);         % control effort
 
 % Larval recruitment and survival for coral
-r_c = 1.2;                                    % production rate
+r_c = 1.2;                                  % production rate
 kappa_c = [0.2, 0.2;
            0.3, 0.1];                       % coral larval dispersal
 % We need to account for the percentage that die by floating off
@@ -111,44 +111,47 @@ end
 
 %% Plotting - No Control Effort
 % Predator and prey populations over time
-% figure(1), clf, hold on
-% for i = 1:num_reefs
-%     subplot(1, num_reefs, i), hold on
-%     plot(t_vec, x(i, :), '-o', 'Linewidth', 1.5)
-%     plot(t_vec, y(i, :), '-o', 'Linewidth', 1.5)
-%     yline(A(i), 'k--')
-%     xlabel('Time (years)', 'Interpreter', 'Latex', 'Fontsize', 13)
-%     ylabel('Population size', 'Interpreter', 'Latex', 'Fontsize', 13)
-%     title(['Reef ', num2str(i)], 'Interpreter', 'Latex', 'Fontsize', 14) 
-%     if i == 1
-% %         ylim([0 160])
-%     end
-%     if i == 2
-%         legend('Coral cover (m^2)', 'No. of starfish', ...
-%                'Carrying capacity of coral', 'Location', 'NorthEast')
-%         ylim([0 100]) 
-%     end
-% end
-
-% Predator-prey phase plane
-figure(2), clf, hold on
+figure(1), clf, hold on
 for i = 1:num_reefs
     subplot(1, num_reefs, i), hold on
-    plot(x(i, :), y(i, :), 'Linewidth', 1)
-    xlabel('Coral cover ($m^2$)', 'Interpreter', 'Latex', 'Fontsize', 13)
-    ylabel('Number of starfish', 'Interpreter', 'Latex', 'Fontsize', 13)
-    title(['Reef ', num2str(i)], 'Interpreter', 'Latex', 'Fontsize', 14)
+    plot(t_vec, x(i, :), '-o', 'Linewidth', 1.5)
+    plot(t_vec, y(i, :), '-o', 'Linewidth', 1.5)
+    yline(A(i), 'k--')
+    xlabel('Time (years)', 'Interpreter', 'Latex', 'Fontsize', 13)
+    ylabel('Population size', 'Interpreter', 'Latex', 'Fontsize', 13)
+    title(['Reef ', num2str(i), ' without control'], 'Interpreter', 'Latex', 'Fontsize', 14) 
     if i == 1
-%         xlim([0 120])
+%         ylim([0 160])
     end
     if i == 2
-%         xlim([0 80]) 
+%         legend('Coral cover (m^2)', 'No. of starfish', ...
+%                'Carrying capacity of coral', 'Location', 'NorthEast')
+        ylim([0 120]) 
     end
 end
+
+% Predator-prey phase plane
+% figure(2), clf, hold on
+% for i = 1:num_reefs
+%     subplot(1, num_reefs, i), hold on
+%     plot(x(i, 1), y(i, 1), '.', 'Color', '#0072BD', 'MarkerSize', 20)
+%     plot(x(i, :), y(i, :), 'Color', '#0072BD', 'Linewidth', 1)
+%     xlabel('Coral cover ($m^2$)', 'Interpreter', 'Latex', 'Fontsize', 13)
+%     ylabel('Number of starfish', 'Interpreter', 'Latex', 'Fontsize', 13)
+%     title(['Reef ', num2str(i)], 'Interpreter', 'Latex', 'Fontsize', 14)
+%     if i == 1
+% %         xlim([0 120])
+%     end
+%     if i == 2
+% %         xlim([0 80]) 
+%         legend('Initial Population')
+%     end
+% end
 
 %% Plotting - Control Effort
 % Predator and prey populations over time
 % figure(3), clf, hold on
+% 
 % for i = 1:num_reefs
 %     subplot(1, num_reefs, i), hold on
 %     plot(t_vec, x(i, :), '-o', 'Linewidth', 1.5)
@@ -156,13 +159,15 @@ end
 %     yline(A(i), 'k--')
 %     xlabel('Time (years)', 'Interpreter', 'Latex', 'Fontsize', 13)
 %     ylabel('Population size', 'Interpreter', 'Latex', 'Fontsize', 13)
-%     title(['Reef ', num2str(i)], 'Interpreter', 'Latex', 'Fontsize', 14) 
+%     title(['Reef ', num2str(i), ' with ' num2str(k(i)*100), '\% control'], 'Interpreter', 'Latex', 'Fontsize', 14) 
 %     if i == 1
-%         ylim([0 120])
+%         legend('Coral cover (m^2)', 'No. of starfish', ...
+%                'Carrying capacity of coral', 'Location', 'NorthEast')
+%         ylim([0 140])
 %     end
 %     if i == 2
 %         legend('Coral cover (m^2)', 'No. of starfish', ...
 %                'Carrying capacity of coral', 'Location', 'NorthEast')
-%         ylim([0 90]) 
+%         ylim([0 120]) 
 %     end
 % end
