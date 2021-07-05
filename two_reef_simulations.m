@@ -1,4 +1,4 @@
-clear all
+clear all;
 
 %% No Control Effort For 15 Years
 % PARAMETERS
