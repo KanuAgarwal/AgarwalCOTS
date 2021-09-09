@@ -28,7 +28,7 @@ params.p_1_m = 0.268;           % effect of COTS on slow-growing coral
 % Known or arbitrarily chosen by Morello et al. (2014)
 params.r_f = 0.5;               % intrinsic growth rate of fast-growing coral
 params.r_m = 0.1;               % intrinsic growth rate of slow-growing coral
-params.K_f = 1;              % carrying capacity of fast-growing coral
+params.K_f = 1;                 % carrying capacity of fast-growing coral
 params.K_m = 500;               % carrying capacity of slow-growing coral
 params.p_2_f = 10;              % effect of COTS on fast-growing coral
 params.p_2_m = 8;               % effect of COTS on slow-growing coral
@@ -36,12 +36,9 @@ params.p_2_m = 8;               % effect of COTS on slow-growing coral
 % Known or arbitrarily chosen by me
 % params.rho = 1;                 % proliferation rate of starfish larvae 
 % params.K = 1;                   % starfish larvae carrying capacity
-
-% Estimated or taken from other papers
-% Coral larvae production rate - from Practchett et al. (2019)
-params.r_c = 0.1;  
+params.r_c = 0.1;               % coral larvae production rate
 % Starfish larvae production rate - from Pratchett et al. (2021)
-params.r_s = 6730;                 
+params.r_s = 5000;                 
 
 % Reef dependent variables
 % Coral larvae connectivity matrix - from Bode et al. (2012)
@@ -56,7 +53,7 @@ num_reefs = length(params.omega_c);
 % INITIAL SYSTEM STATE
 % Coral
 % biomass of fast-growing coral = carrying capacity
-initial_state.C_0_f = 0.8* params.K_f * ones(num_reefs, 1);
+initial_state.C_0_f = 0.8 * params.K_f * ones(num_reefs, 1);
 % biomass of slow-growing coral = carrying capacity
 initial_state.C_0_m = params.K_m * ones(num_reefs, 1);  
 
@@ -64,10 +61,16 @@ initial_state.C_0_m = params.K_m * ones(num_reefs, 1);
 % number of COTS aged 2+ = estimated
 % initial_state.N_0_2 = 0.505 * ones(num_reefs, 1);
 initial_state.N_0_2 = zeros(num_reefs, 1);
-% Find index of reef at top
-% [~, index] = max(lat);
-% % Put some starfish there
-% initial_state.N_0_2(492, 1) = 1000;
+% Find index of reef with the most connectivity
+[~, index] = max(sum(params.omega_c, 2));
+% Put some starfish there
+initial_state.N_0_2(index, 1) = 200;
+% Pick another reef to put starfish at
+index_2 = 304;
+initial_state.N_0_2(index_2, 1) = 200;
+% Pick another reef to put starfish at
+index_3 = 1004;
+initial_state.N_0_2(index_3, 1) = 200;
 
 % number of COTS aged 1 = no. of age 2+ COTS * function
 % initial_state.N_0_1 = initial_state.N_0_2 * exp(params.M_cots);
@@ -162,6 +165,15 @@ figure(4), clf, hold on, box on
 pt = patch(Outline(:, 1), Outline(:, 2), [1 1 1]);
 % Plot reef locations in grey
 plot(lat, lon, '.', 'Markersize', 10, 'Color', 0.7.*ones(1,3))
+% Reef where outbreak is starting in this simulation
+plot(lat(index), lon(index), 'b.', 'Markersize', 10)
+plot(lat(index_2), lon(index_2), 'b.', 'Markersize', 10)
+plot(lat(index_3), lon(index_3), 'b.', 'Markersize', 10)
 % Focus the figure on GBR and QLD
 xlim([140, 155])
 ylim([-26, -8])
+
+% Plot connectivity of reefs 
+figure(5), clf, hold on, grid on
+plot(1:1:2175, sum(params.omega_c, 2))
+% xlim([200 600])
