@@ -81,7 +81,7 @@ N_y_0(:, 1) = N_0_0;
 sigma = zeros(num_reefs, length(t_vec)-1);              % coral
 tau = zeros(num_reefs, length(t_vec)-1);                % starfish
 % Matrices for larval recruitment after mortality
-% phi = zeros(num_reefs, length(t_vec)-1);                % coral
+phi = zeros(num_reefs, length(t_vec)-1);                % coral
 % gamma = zeros(num_reefs, length(t_vec)-1);              % starfish
 
 
@@ -130,12 +130,12 @@ for t = t_0+1:t_end
             sigma(i, t) = sigma(i, t) + omega_c(j, i) * C_y_f(j, t) * r_c;
         end
         
-%         % Calculate coral settlement based on area left on reef
-%         if sigma(i, t) <= (A(i) - x(i, t))
-%             phi(i, t) = sigma(i, t);
-%         else
-%             phi(i, t) = A(i) - x(i, t);
-%         end
+        % Calculate coral settlement based on area left on reef
+        if sigma(i, t) <= (1 - C_y_f(i, t))
+            phi(i, t) = sigma(i, t);
+        else
+            phi(i, t) = 1 - C_y_f(i, t);
+        end
                         
         % Function for calculating different coral population sizes
         rho_y = exp(-5 * C_y_f(i, t) / K_f);
@@ -151,7 +151,7 @@ for t = t_0+1:t_end
 
         % Calculate population size for fast-growing coral
         C_y_f(i, t+1) = C_y_f(i, t) + r_f * C_y_f(i, t) * (1 - C_y_f(i, t)/K_f) ...
-                            - Q_y_f + sigma(i, t);
+                            - Q_y_f + phi(i, t);
         
 %         % Calculate population size for slow-growing coral
 %         C_y_m(i, t+1) = C_y_m(i, t) + r_m * C_y_m(i, t) * (1 - C_y_m(i, t)/K_m) - Q_y_m;
