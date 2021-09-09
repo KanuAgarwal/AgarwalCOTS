@@ -61,7 +61,7 @@ C_y_m_cover = C_y_m.^(2/3);
 
 % PLOT
 % Coral biomass
-figure(1), clf, hold on
+figure, clf, hold on, grid on
 plot(t_vec, C_y_f(1, :), 'Linewidth', 2)
 plot(t_vec, C_y_m(1, :), 'Linewidth', 2)
 xlabel('Time (years)')
@@ -70,21 +70,21 @@ title('Coral biomass at reef 1')
 legend('Fast-growing coral', 'Slow-growing coral')
 
 % Fast-growing coral cover
-figure(2), clf, hold on
+figure, clf, hold on, grid on
 plot(t_vec, C_y_f_cover(1, :), 'Linewidth', 2)
 xlabel('Time (years)')
 ylabel('Coral cover')
 title('Fast-growing coral cover at reef 1')
 
 % Slow-growing coral cover
-figure(3), clf, hold on
-plot(t_vec, C_y_m_cover(1, :), 'Linewidth', 2)
+figure, clf, hold on, grid on
+plot(t_vec, C_y_m_cover(1, :), 'Linewidth', 2, 'Color', [0.8500 0.3250 0.0980])
 xlabel('Time (years)')
 ylabel('Coral cover')
 title('Slow-growing coral cover at reef 1')
 
 % All COTS
-figure(4), clf, hold on
+figure, clf, hold on, grid on
 plot(t_vec, N_y_2(1, :), 'Linewidth', 2)
 plot(t_vec, N_y_1(1, :), 'Linewidth', 2)
 plot(t_vec, N_y_0(1, :), 'Linewidth', 2)
@@ -94,7 +94,7 @@ legend('Age 2+ COTS', 'Age 1 COTS', 'Age 0 COTS')
 title('COTS population at reef 1')
 
 % Age 2 COTS 
-figure(5), clf, hold on
+figure, clf, hold on, grid on
 plot(t_vec, N_y_2(1, :), 'Linewidth', 2)
 xlabel('Time (years)')
 ylabel('Number of COTS')

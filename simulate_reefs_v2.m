@@ -119,9 +119,9 @@ for t = t_0+1:t_end
         % Calculate population sizes for age 0 COTS depending on year -
         % based on Morello paper - testing base case model
         if t == 1
-            N_y_0(i, t+1) = 1 + exp(4.292);
+            N_y_0(i, t+1) = 1 + exp(4.307);
         elseif t == 3
-            N_y_0(i, t+1) = exp(4.307) + 1;
+            N_y_0(i, t+1) = exp(4.292) + 1;
         else
             N_y_0(i, t+1) = 2;
         end
@@ -134,7 +134,8 @@ for t = t_0+1:t_end
         N_y_2(i, t+1) = (N_y_1(i, t) + N_y_2(i, t)) * exp(-f_of_C * M_cots);
         
         % Function for calculating different coral population sizes
-        rho_y = 1 + exp(-5 * C_y_f(i, t) / K_f);
+        rho_y = exp(-5 * C_y_f(i, t) / K_f);
+%         rho_y = 1 / (1 + exp(-70 * (C_y_f(i, t) / (K_f - 0.1))));
         
         % Fast-growing coral mortality from COTS 
         Q_y_f = (1-rho_y) * (p_1_f * (N_y_1(i, t) + N_y_2(i, t)) * C_y_f(i, t)) ...
