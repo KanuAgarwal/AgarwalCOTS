@@ -1,4 +1,4 @@
-function [t_vec, C_y_f, C_y_m, N_y_2, N_y_1, N_y_0] = simulate_reefs_v2(num_reefs, t_end, params, initial_state, control_effort)
+function [t_vec, C_y_f, N_y_2, N_y_1, N_y_0] = simulate_reefs_v2(num_reefs, t_end, params, initial_state, control_effort)
 
 % This function simulates starfish and coral populations at n reefs for t 
 % years. 
@@ -33,10 +33,10 @@ p_2_f = params.p_2_f;           % effect of COTS on fast-growing coral
 p_2_m = params.p_2_m;           % effect of COTS on slow-growing coral
 % rho = params.rho;               % proliferation rate of starfish larvae 
 % K = params.K;                   % starfish larvae carrying capacity
-% r_c = params.r_c;               % coral larvae production rate
-% r_s = params.r_s;               % starfish larvae production rate
-% kappa_c = params.kappa_c;       % coral larvae connectivity matrix
-% kappa_s = params.kappa_s;       % starfish larvae connectivity matrix
+r_c = params.r_c;               % coral larvae production rate
+r_s = params.r_s;               % starfish larvae production rate
+omega_c = params.omega_c;       % coral larvae connectivity matrix
+omega_s = params.omega_s;       % starfish larvae connectivity matrix
 % A = params.A;                   % reef area i.e. coral carrying capacity
 
 % Initial state of the system
@@ -77,10 +77,10 @@ N_y_0(:, 1) = N_0_0;
 % % Keep track of percentage of larvae that die at each reef
 % kappa_c_dead = 1 - sum(kappa_c, 2);
 % kappa_s_dead = 1 - sum(kappa_s, 2);
-% % Matrices for larval recruitment before mortality
-% sigma = zeros(num_reefs, length(t_vec)-1);              % coral
-% tau = zeros(num_reefs, length(t_vec)-1);                % starfish
-% % Matrices for larval recruitment after mortality
+% Matrices for larval recruitment before mortality
+sigma = zeros(num_reefs, length(t_vec)-1);              % coral
+tau = zeros(num_reefs, length(t_vec)-1);                % starfish
+% Matrices for larval recruitment after mortality
 % phi = zeros(num_reefs, length(t_vec)-1);                % coral
 % gamma = zeros(num_reefs, length(t_vec)-1);              % starfish
 
@@ -90,41 +90,32 @@ N_y_0(:, 1) = N_0_0;
 for t = t_0+1:t_end
     % Loop over and calculate population at each reef
     for i = 1:num_reefs
-        
-%         % Calculate starfish larval recruitment
-%         for j = 1:num_reefs
-%             tau(i, t) = tau(i, t) + kappa_s(j, i) * y(j, t) * r_s;
-%         end
-% 
+        % STARFISH ========================================================
+        % Calculate starfish larval recruitment
+        for j = 1:num_reefs
+            tau(i, t) = tau(i, t) + omega_s(j, i) * N_y_2(j, t) * r_s;
+        end
+
 %         % Use Beverton-Holt model for starfish survival
 %         gamma(i, t) = (rho * tau(i, t)) / (1 + (rho - 1)/K(i) * tau(i, t));
-%         
+        
 %         % Check gamma isn't negative
 %         if gamma(i, t) < 0
 %             gamma(i, t) = 0;
 %         end
-%        
-%         % Calculate coral larval recuitment
-%         for j = 1:num_reefs
-%             sigma(i, t) = sigma(i, t) + kappa_c(j, i) * x(j, t) * r_c;
-%         end
-%         
-%         % Calculate coral settlement based on area left on reef
-%         if sigma(i, t) <= (A(i) - x(i, t))
-%             phi(i, t) = sigma(i, t);
-%         else
-%             phi(i, t) = A(i) - x(i, t);
-%         end
 
-        % Calculate population sizes for age 0 COTS depending on year -
-        % based on Morello paper - testing base case model
-        if t == 1
-            N_y_0(i, t+1) = 1 + exp(4.307);
-        elseif t == 3
-            N_y_0(i, t+1) = exp(4.292) + 1;
-        else
-            N_y_0(i, t+1) = 2;
-        end
+%         % Calculate population sizes for age 0 COTS depending on year -
+%         % based on Morello paper - testing base case model
+%         if t == 1
+%             N_y_0(i, t+1) = 1 + exp(4.307);
+%         elseif t == 3
+%             N_y_0(i, t+1) = exp(4.292) + 1;
+%         else
+%             N_y_0(i, t+1) = 2;
+%         end
+        
+        % Calculate population sizes for age 0 COTS
+        N_y_0(i, t+1) = tau(i, t);
         
         % Functions to help calculate age 1 and 2+ COTS population sizes
         f_of_C = 1 - p_tilde * (C_y_f(i, t) / (1 + C_y_f(i, t)));
@@ -133,6 +124,19 @@ for t = t_0+1:t_end
         N_y_1(i, t+1) = N_y_0(i, t) * exp(-f_of_C * M_cots);
         N_y_2(i, t+1) = (N_y_1(i, t) + N_y_2(i, t)) * exp(-f_of_C * M_cots);
         
+        % CORAL ===========================================================
+        % Calculate coral larval recuitment
+        for j = 1:num_reefs
+            sigma(i, t) = sigma(i, t) + omega_c(j, i) * C_y_f(j, t) * r_c;
+        end
+        
+%         % Calculate coral settlement based on area left on reef
+%         if sigma(i, t) <= (A(i) - x(i, t))
+%             phi(i, t) = sigma(i, t);
+%         else
+%             phi(i, t) = A(i) - x(i, t);
+%         end
+                        
         % Function for calculating different coral population sizes
         rho_y = exp(-5 * C_y_f(i, t) / K_f);
 %         rho_y = 1 / (1 + exp(-70 * (C_y_f(i, t) / (K_f - 0.1))));
@@ -141,24 +145,26 @@ for t = t_0+1:t_end
         Q_y_f = (1-rho_y) * (p_1_f * (N_y_1(i, t) + N_y_2(i, t)) * C_y_f(i, t)) ...
                     / (1 + exp( -(N_y_1(i, t) + N_y_2(i, t)) / p_2_f));
 
-        % Slow-growing coral mortality from COTS
-        Q_y_m = rho_y * (p_1_m * (N_y_1(i, t) + N_y_2(i, t)) * C_y_m(i, t)) ...
-                    / (1 + exp( -(N_y_1(i, t) + N_y_2(i, t))/p_2_m) );
-                
+%         % Slow-growing coral mortality from COTS
+%         Q_y_m = rho_y * (p_1_m * (N_y_1(i, t) + N_y_2(i, t)) * C_y_m(i, t)) ...
+%                     / (1 + exp( -(N_y_1(i, t) + N_y_2(i, t))/p_2_m) );
+
         % Calculate population size for fast-growing coral
-        C_y_f(i, t+1) = C_y_f(i, t) + r_f * C_y_f(i, t) * (1 - C_y_f(i, t)/K_f) - Q_y_f;
+        C_y_f(i, t+1) = C_y_f(i, t) + r_f * C_y_f(i, t) * (1 - C_y_f(i, t)/K_f) ...
+                            - Q_y_f + sigma(i, t);
         
-        % Calculate population size for slow-growing coral
-        C_y_m(i, t+1) = C_y_m(i, t) + r_m * C_y_m(i, t) * (1 - C_y_m(i, t)/K_m) - Q_y_m;
-        
+%         % Calculate population size for slow-growing coral
+%         C_y_m(i, t+1) = C_y_m(i, t) + r_m * C_y_m(i, t) * (1 - C_y_m(i, t)/K_m) - Q_y_m;
+
+        % CHECKS ==========================================================
         % Ensure populations aren't less than zero
         if C_y_f(i, t+1) < 0
             C_y_f(i, t+1) = 0;          % fast-growing coral
         end
 
-        if C_y_m(i, t+1) < 0
-            C_y_m(i, t+1) = 0;          % slow-growing coral
-        end
+%         if C_y_m(i, t+1) < 0
+%             C_y_m(i, t+1) = 0;          % slow-growing coral
+%         end
         
         if N_y_0(i, t+1) < 0
             N_y_0(i, t+1) = 0;          % age 0 COTS
@@ -171,6 +177,7 @@ for t = t_0+1:t_end
         if N_y_2(i, t+1) < 0            % age 2+ COTS
             N_y_2(i, t+1) = 0;
         end
+        % =================================================================
     end
 end
 
