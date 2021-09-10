@@ -14,7 +14,7 @@ lon = lt;
 clear lg lt
 
 % PARAMETERS
-t_end = 15;                     % time in years
+t_end = 100;                     % time in years
 control_effort = 0;             % no control effort
 
 % Parameters struct: store all parameters in a struct
@@ -139,7 +139,7 @@ title('Fast-growing coral biomass')
 xlabel('Time (years)')
 ylabel('Reef')
 colorbar
-xlim([1 16])
+% xlim([1 16])
 ylim([0 num_reefs])
 
 % Age 2+ COTS heatmap
@@ -149,7 +149,7 @@ title('Age 2+ COTS')
 xlabel('Time (years)')
 ylabel('Reef')
 colorbar
-xlim([1 16])
+% xlim([1 16])
 ylim([0 num_reefs])
 
 % Total coral cover over time
@@ -159,8 +159,15 @@ xlabel('Time (years)')
 ylabel('Total coral cover')
 title('Total coral cover on GBR over time')
 
+% Total starfish over time
+figure(4), clf, hold on, grid on
+plot(t_vec, starfish_over_time, 'Linewidth', 2)
+xlabel('Time (years)')
+ylabel('Total starfish')
+title('Total Age 2+ starfish on GBR over time')
+
 % GBR
-figure(4), clf, hold on, box on
+figure(5), clf, hold on, box on
 % Plot outline of Australia
 pt = patch(Outline(:, 1), Outline(:, 2), [1 1 1]);
 % Plot reef locations in grey
@@ -172,8 +179,46 @@ plot(lat(index_3), lon(index_3), 'b.', 'Markersize', 10)
 % Focus the figure on GBR and QLD
 xlim([140, 155])
 ylim([-26, -8])
+title('Starfish outbreak locations')
+
+% GBR
+figure(6), clf, hold on, box on
+% Plot outline of Australia
+pt = patch(Outline(:, 1), Outline(:, 2), [1 1 1]);
+title('Coral cover on GBR after 15 years')
+xlim([140, 155])
+ylim([-26, -8])
+% Plot reef locations by colour based on coral presence
+% for t = 1:length(t_vec)
+for i = 1:length(lat)
+    if C_y_f(i, end) > 0.9
+        plot(lat(i), lon(i), '.', 'Markersize', 10, 'Color', [0.4660 0.6740 0.1880])
+    elseif C_y_f(i, end) < 0.01
+        plot(lat(i), lon(i), '.', 'Markersize', 10, 'Color', [0.8500 0.3250 0.0980])
+    else
+        plot(lat(i), lon(i), '.', 'Markersize', 10, 'Color', [0.9290 0.6940 0.1250])
+    end
+end
+% end
+
+% GBR
+figure(7), clf, hold on, box on
+% Plot outline of Australia
+pt = patch(Outline(:, 1), Outline(:, 2), [1 1 1]);
+title('Starfish population on GBR after 15 years')
+xlim([140, 155])
+ylim([-26, -8])
+% Plot reef locations by colour based on starfish presence
+% for t = 1:length(t_vec)
+for i = 1:length(lat)
+    if N_y_2(i, end) > 0.5
+        plot(lat(i), lon(i), '.', 'Markersize', 10, 'Color', [0.8500 0.3250 0.0980])
+    else
+        plot(lat(i), lon(i), '.', 'Markersize', 10, 'Color', [0.4660 0.6740 0.1880])
+    end
+end
+% end
+
 
 % Plot connectivity of reefs 
-figure(5), clf, hold on, grid on
-plot(1:1:2175, sum(params.omega_c, 2))
-% xlim([200 600])
+7u
