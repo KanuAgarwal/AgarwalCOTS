@@ -119,7 +119,8 @@ for t = t_0+1:t_end
 
         % Calculate population sizes for age 1 and 2+ COTS
         N_y_1(i, t+1) = N_y_0(i, t) * exp(-f_of_C * M_cots);
-        N_y_2(i, t+1) = (N_y_1(i, t) + N_y_2(i, t)) * exp(-f_of_C * M_cots);
+        N_y_2(i, t+1) = (N_y_1(i, t) + N_y_2(i, t)) * exp(-f_of_C * M_cots) ...
+                            - k(i, t) * N_y_2(i, t);
         
         % CORAL ===========================================================
         % Calculate coral larval recuitment
