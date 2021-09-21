@@ -78,8 +78,8 @@ end
 sigma = zeros(num_reefs, length(t_vec)-1);              % coral
 tau = zeros(num_reefs, length(t_vec)-1);                % starfish
 % Matrices for larval recruitment after mortality
-% phi = zeros(num_reefs, length(t_vec)-1);                % coral
-% gamma = zeros(num_reefs, length(t_vec)-1);              % starfish
+phi = zeros(num_reefs, length(t_vec)-1);                % coral
+gamma = zeros(num_reefs, length(t_vec)-1);              % starfish
 
 
 % SOLVE ===================================================================
@@ -94,7 +94,8 @@ for t = t_0+1:t_end
         end
 
 %         % Use Beverton-Holt model for starfish survival
-%         gamma(i, t) = (rho * tau(i, t)) / (1 + (rho - 1)/K(i) * tau(i, t));
+%         gamma(i, t) = (rho * tau(i, t)) / (1 + K * tau(i, t));
+%         gamma(i, t) = (rho * tau(i, t)) / (1 + (rho - 1)/K * tau(i, t));
         
 %         % Check gamma isn't negative
 %         if gamma(i, t) < 0

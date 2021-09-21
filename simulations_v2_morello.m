@@ -43,7 +43,7 @@ params.p_2_f = 10;              % effect of COTS on fast-growing coral
 params.r_c = 0.1;               % coral larvae reproduction rate
 params.r_s = 5000;              % starfish larvae reproduction rate
 % params.rho = 1;                 % proliferation rate of starfish larvae 
-% params.K = 1;                   % starfish larvae carrying capacity
+% params.K = 2;                   % starfish larvae carrying capacity
 
 % Connectivity matrices from Bode et al. (2012)
 params.omega_c = psurv_d02_1122_P7;             % coral
@@ -70,11 +70,19 @@ initial_state.N_0_2 = zeros(num_reefs, 1);
 for i = 1:num_reefs
     if (lon(i) > -14.715 && lon(i) < -14.635) && (lat(i) > 145.425 && lat(i) < 145.485)
         lizard_index = i;
-        fprintf(['Lizard Island: ', num2str(i), ', ', num2str(lon(i)), ', ' num2str(lat(i)), '\n'])
+        fprintf(['Lizard Island: ', num2str(i), ', ', num2str(lon(i)), ...
+                ', ' num2str(lat(i)), '\n'])
     end
 end
 % Put some starfish at Lizard Island
-initial_state.N_0_2(lizard_index, 1) = 200;
+% initial_state.N_0_2(lizard_index) = 200;
+
+% Look for reefs within the initiation box, and put some starfish there
+for i = 1:num_reefs
+    if (lon(i) > -17 && lon(i) < -14.75) && (lat(i) > 145 && lat(i) < 147)
+        initial_state.N_0_2(i) = 100;
+    end
+end
 
 % % Find index of reef with the most connectivity
 % [~, index] = max(sum(params.omega_c, 2));
@@ -83,10 +91,7 @@ initial_state.N_0_2(lizard_index, 1) = 200;
 % % Pick other reefs to put starfish at
 % index_2 = 304;
 % initial_state.N_0_2(index_2, 1) = 200;
-% index_3 = 1004;
-% initial_state.N_0_2(index_3, 1) = 200;
-
-% Number of COTS aged 1 = no. of age 2+ COTS * function
+% index_3 = 1004;nction
 % initial_state.N_0_1 = initial_state.N_0_2 * exp(params.M_cots);
 initial_state.N_0_1 = zeros(num_reefs, 1);
 % Number of COTS aged 0 = no. of age 2+ COTS * function
@@ -95,9 +100,17 @@ initial_state.N_0_0 = zeros(num_reefs, 1);
 
 
 % CONTROL EFFORT ----------------------------------------------------------
-% Choose control effort
-control_effort = 0;
-% control_effort = 0.1 * ones(num_reefs, t_end+1);
+% No control effort
+% control_effort = 0;
+
+% Cull all the starfish only in the initiation box for the first 10 years
+control_effort = zeros(num_reefs, t_end+1);
+for i = 1:num_reefs
+    if (lon(i) > -17 && lon(i) < -14.75) && (lat(i) > 145 && lat(i) < 147)
+        control_effort(i, 1:11) = 1;
+    end
+end
+
 
 
 
@@ -189,15 +202,15 @@ figure(4), clf, hold on, grid on
 plot(t_vec, starfish_over_time, 'Linewidth', 2)
 xlabel('Time (years)')
 ylabel('Total starfish')
-title('Total age 2+starfish on GBR over time')
+title('Total age 2+ starfish on GBR over time')
 
-figure(10), clf, hold on, grid on
+figure(5), clf, hold on, grid on
 plot(t_vec, starfish_age1_over_time, 'Linewidth', 2)
 xlabel('Time (years)')
 ylabel('Total starfish')
 title('Total age 1 starfish on GBR over time')
 
-figure(11), clf, hold on, grid on
+figure(6), clf, hold on, grid on
 plot(t_vec, starfish_larvae_over_time, 'Linewidth', 2)
 xlabel('Time (years)')
 ylabel('Total starfish')
@@ -205,23 +218,24 @@ title('Total age 0 starfish on GBR over time')
 
 
 % Outbreak initiation on GBR ----------------------------------------------
-figure(5), clf, hold on, box on
+figure(7), clf, hold on, box on
 % Plot outline of Australia
 pt = patch(Outline(:, 1), Outline(:, 2), [1 1 1]);
-% Plot reef locations in grey
-plot(lat, lon, '.', 'Markersize', 10, 'Color', 0.7.*ones(1,3))
-% Reef where outbreak is starting in this simulation
-plot(lat(lizard_index), lon(lizard_index), 'b.', 'Markersize', 10)
-% plot(lat(index), lon(index), 'b.', 'Markersize', 10)
-% plot(lat(index_2), lon(index_2), 'b.', 'Markersize', 10)
-% plot(lat(index_3), lon(index_3), 'b.', 'Markersize', 10)
+% Plot reef locations by color depending on initial cots numbers
+for i = 1:num_reefs
+    if initial_state.N_0_2(i) > 0
+        plot(lat(i), lon(i), 'b.', 'Markersize', 10)
+    else
+        plot(lat(i), lon(i), '.', 'Markersize', 10, 'Color', 0.7.*ones(1,3))
+    end
+end
 % Focus the figure on GBR and QLD
 xlim([140, 155])
 ylim([-26, -8])
 title('Starfish outbreak location at Lizard Island')
 
 % % GIF: Coral cover on GBR -------------------------------------------------
-% h1 = figure(6); clf, hold on, box on
+% h1 = figure(8); clf, hold on, box on
 % % Plot outline of Australia
 % pt = patch(Outline(:, 1), Outline(:, 2), [1 1 1]);
 % xlim([140, 155])
@@ -263,7 +277,7 @@ title('Starfish outbreak location at Lizard Island')
 % end
 
 % Coral cover on GBR ------------------------------------------------------
-figure(6), clf, hold on, box on
+figure(8), clf, hold on, box on
 title(['Coral cover on GBR after ', num2str(t_end), ' years'])
 % Plot outline of Australia
 pt = patch(Outline(:, 1), Outline(:, 2), [1 1 1]);
@@ -271,7 +285,7 @@ xlim([140, 155])
 ylim([-26, -8])
 % Plot reef locations by colour based on coral presence
 for i = 1:length(lat)
-    if C_y_f(i, end) > 0.9
+    if C_y_f(i, end) > 0.8
         plot(lat(i), lon(i), '.', 'Markersize', 10, 'Color', [0.4660 0.6740 0.1880])
     elseif C_y_f(i, end) < 0.01
         plot(lat(i), lon(i), '.', 'Markersize', 10, 'Color', [0.8500 0.3250 0.0980])
@@ -281,7 +295,7 @@ for i = 1:length(lat)
 end
 
 % % GIF: Starfish population on GBR -----------------------------------------
-% h2 = figure(7); clf, hold on, box on
+% h2 = figure(9); clf, hold on, box on
 % % Plot outline of Australia
 % pt = patch(Outline(:, 1), Outline(:, 2), [1 1 1]);
 % xlim([140, 155])
@@ -322,7 +336,7 @@ end
 % end
 
 % Starfish population on GBR ----------------------------------------------
-figure(7), clf, hold on, box on
+figure(9), clf, hold on, box on
 title(['Starfish population on GBR after ', num2str(t_end), ' years'])
 % Plot outline of Australia
 pt = patch(Outline(:, 1), Outline(:, 2), [1 1 1]);
@@ -331,12 +345,12 @@ ylim([-26, -8])
 % Plot reef locations by colour based on starfish presence
 for i = 1:length(lat)
     if N_y_2(i, end) > 0.5
-        plot(lat(i), lon(i), '.', 'Markersize', 10, 'Color', [0.8500 0.3250 0.0980]);
-    else
         plot(lat(i), lon(i), '.', 'Markersize', 10, 'Color', [0.4660 0.6740 0.1880]);
+    else
+        plot(lat(i), lon(i), '.', 'Markersize', 10, 'Color', [0.8500 0.3250 0.0980]);
     end
 end
 
 % % Connectivity of reefs ---------------------------------------------------
-% figure(8), clf, hold on, grid on
+% figure(10), clf, hold on, grid on
 % plot(1:1:2175, sum(params.omega_c, 2))
