@@ -65,15 +65,16 @@ initial_state.C_0_f = 0.8 * params.K_f * ones(num_reefs, 1);
 % initial_state.N_0_2 = 0.505 * ones(num_reefs, 1);
 initial_state.N_0_2 = zeros(num_reefs, 1);
 
-% Start the outbreak
+% % Start the outbreak
 % Find the index of Lizard Island reef
-for i = 1:num_reefs
-    if (lon(i) > -14.715 && lon(i) < -14.635) && (lat(i) > 145.425 && lat(i) < 145.485)
-        lizard_index = i;
-        fprintf(['Lizard Island: ', num2str(i), ', ', num2str(lon(i)), ...
-                ', ' num2str(lat(i)), '\n'])
-    end
-end
+% for i = 1:num_reefs
+%     if (lon(i) > -14.715 && lon(i) < -14.635) && (lat(i) > 145.425 && lat(i) < 145.485)
+%         lizard_index = i;
+%         fprintf(['Lizard Island: ', num2str(i), ', ', num2str(lon(i)), ...
+%                 ', ' num2str(lat(i)), '\n'])
+%     end
+% end
+% 
 % Put some starfish at Lizard Island
 % initial_state.N_0_2(lizard_index) = 200;
 
@@ -84,6 +85,11 @@ for i = 1:num_reefs
     end
 end
 
+% Initialise age 1 and age 0 COTS based on Morello initial conditions
+initial_state.N_0_1 = initial_state.N_0_2 * exp(params.M_cots);
+initial_state.N_0_0 = initial_state.N_0_2 * exp(2*params.M_cots);
+
+
 % % Find index of reef with the most connectivity
 % [~, index] = max(sum(params.omega_c, 2));
 % % Put some starfish there
@@ -91,12 +97,15 @@ end
 % % Pick other reefs to put starfish at
 % index_2 = 304;
 % initial_state.N_0_2(index_2, 1) = 200;
-% index_3 = 1004;nction
+% index_3 = 1004;
+
+% Age 1 and 2 COTS
+% Number of COTS aged 1 = no. of age 2+ COTS * function
 % initial_state.N_0_1 = initial_state.N_0_2 * exp(params.M_cots);
-initial_state.N_0_1 = zeros(num_reefs, 1);
+% initial_state.N_0_1 = zeros(num_reefs, 1);
 % Number of COTS aged 0 = no. of age 2+ COTS * function
 % initial_state.N_0_0 = initial_state.N_0_2 * exp(2*params.M_cots);
-initial_state.N_0_0 = zeros(num_reefs, 1);
+% initial_state.N_0_0 = zeros(num_reefs, 1);
 
 
 % CONTROL EFFORT ----------------------------------------------------------
@@ -294,62 +303,62 @@ for i = 1:length(lat)
     end
 end
 
-% % GIF: Starfish population on GBR -----------------------------------------
-% h2 = figure(9); clf, hold on, box on
-% % Plot outline of Australia
-% pt = patch(Outline(:, 1), Outline(:, 2), [1 1 1]);
-% xlim([140, 155])
-% ylim([-26, -8])
-% % Plot reef locations by colour based on starfish presence
-% for t = 1:length(t_vec)
-%     % Plot
-%     for i = 1:length(lat)
-%         if N_y_2(i, t) > 0.5
-%             p(i) = plot(lat(i), lon(i), '.', 'Markersize', 10, 'Color', [0.8500 0.3250 0.0980]);
-%         else
-%             p(i) = plot(lat(i), lon(i), '.', 'Markersize', 10, 'Color', [0.4660 0.6740 0.1880]);
-%         end
-%     end
-%     
-%     % Update title
-%     title(['Starfish population on GBR after ', num2str(t-1), ' years'])
-%     
-%     % Get current plot as image
-%     frame = getframe(h2);
-%     im = frame2im(frame);
-%     [im_ind, cm] = rgb2ind(im, 256);
-% 
-%     % Write to the gif file
-%     if t == 1
-%     elseif t == 2
-%         imwrite(im_ind, cm, 'Starfish.gif', 'gif', 'Loopcount', inf);
-%     else
-%         imwrite(im_ind, cm, 'Starfish.gif', 'gif', 'WriteMode', ...
-%                 'append', 'DelayTime', 0.1)
-%     end
-% 
-%     % Draw and delete the spheres, ready for the next frame
-%     drawnow
-%     if t < length(t_vec)
-%         delete(p)
-%     end
-% end
-
-% Starfish population on GBR ----------------------------------------------
-figure(9), clf, hold on, box on
-title(['Starfish population on GBR after ', num2str(t_end), ' years'])
+% GIF: Starfish population on GBR -----------------------------------------
+h2 = figure(9); clf, hold on, box on
 % Plot outline of Australia
 pt = patch(Outline(:, 1), Outline(:, 2), [1 1 1]);
 xlim([140, 155])
 ylim([-26, -8])
 % Plot reef locations by colour based on starfish presence
-for i = 1:length(lat)
-    if N_y_2(i, end) > 0.5
-        plot(lat(i), lon(i), '.', 'Markersize', 10, 'Color', [0.4660 0.6740 0.1880]);
+for t = 1:11
+    % Plot
+    for i = 1:length(lat)
+        if N_y_2(i, t) > 0.5
+            p(i) = plot(lat(i), lon(i), '.', 'Markersize', 10, 'Color', [0.8500 0.3250 0.0980]);
+        else
+            p(i) = plot(lat(i), lon(i), '.', 'Markersize', 10, 'Color', [0.4660 0.6740 0.1880]);
+        end
+    end
+    
+    % Update title
+    title(['Starfish population on GBR after ', num2str(t-1), ' years'])
+    
+    % Get current plot as image
+    frame = getframe(h2);
+    im = frame2im(frame);
+    [im_ind, cm] = rgb2ind(im, 256);
+
+    % Write to the gif file
+    if t == 1
+    elseif t == 2
+        imwrite(im_ind, cm, 'Starfish.gif', 'gif', 'Loopcount', inf);
     else
-        plot(lat(i), lon(i), '.', 'Markersize', 10, 'Color', [0.8500 0.3250 0.0980]);
+        imwrite(im_ind, cm, 'Starfish.gif', 'gif', 'WriteMode', ...
+                'append', 'DelayTime', 0.1)
+    end
+
+    % Draw and delete the spheres, ready for the next frame
+    drawnow
+    if t < length(t_vec)
+        delete(p)
     end
 end
+
+% % Starfish population on GBR ----------------------------------------------
+% figure(9), clf, hold on, box on
+% title(['Starfish population on GBR after ', num2str(t_end), ' years'])
+% % Plot outline of Australia
+% pt = patch(Outline(:, 1), Outline(:, 2), [1 1 1]);
+% xlim([140, 155])
+% ylim([-26, -8])
+% % Plot reef locations by colour based on starfish presence
+% for i = 1:length(lat)
+%     if N_y_2(i, end) > 0.5
+%         plot(lat(i), lon(i), '.', 'Markersize', 10, 'Color', [0.8500 0.3250 0.0980]);
+%     else
+%         plot(lat(i), lon(i), '.', 'Markersize', 10, 'Color', [0.4660 0.6740 0.1880]);
+%     end
+% end
 
 % % Connectivity of reefs ---------------------------------------------------
 % figure(10), clf, hold on, grid on
