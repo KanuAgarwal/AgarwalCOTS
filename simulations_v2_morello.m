@@ -116,7 +116,7 @@ initial_state.N_0_0 = initial_state.N_0_2 * exp(2*params.M_cots);
 control_effort = zeros(num_reefs, t_end+1);
 for i = 1:num_reefs
     if (lon(i) > -17 && lon(i) < -14.75) && (lat(i) > 145 && lat(i) < 147)
-        control_effort(i, 1:11) = 1;
+        control_effort(i, :) = 1;
     end
 end
 
@@ -303,62 +303,62 @@ for i = 1:length(lat)
     end
 end
 
-% GIF: Starfish population on GBR -----------------------------------------
-h2 = figure(9); clf, hold on, box on
-% Plot outline of Australia
-pt = patch(Outline(:, 1), Outline(:, 2), [1 1 1]);
-xlim([140, 155])
-ylim([-26, -8])
-% Plot reef locations by colour based on starfish presence
-for t = 1:11
-    % Plot
-    for i = 1:length(lat)
-        if N_y_2(i, t) > 0.5
-            p(i) = plot(lat(i), lon(i), '.', 'Markersize', 10, 'Color', [0.8500 0.3250 0.0980]);
-        else
-            p(i) = plot(lat(i), lon(i), '.', 'Markersize', 10, 'Color', [0.4660 0.6740 0.1880]);
-        end
-    end
-    
-    % Update title
-    title(['Starfish population on GBR after ', num2str(t-1), ' years'])
-    
-    % Get current plot as image
-    frame = getframe(h2);
-    im = frame2im(frame);
-    [im_ind, cm] = rgb2ind(im, 256);
-
-    % Write to the gif file
-    if t == 1
-    elseif t == 2
-        imwrite(im_ind, cm, 'Starfish.gif', 'gif', 'Loopcount', inf);
-    else
-        imwrite(im_ind, cm, 'Starfish.gif', 'gif', 'WriteMode', ...
-                'append', 'DelayTime', 0.1)
-    end
-
-    % Draw and delete the spheres, ready for the next frame
-    drawnow
-    if t < length(t_vec)
-        delete(p)
-    end
-end
-
-% % Starfish population on GBR ----------------------------------------------
-% figure(9), clf, hold on, box on
-% title(['Starfish population on GBR after ', num2str(t_end), ' years'])
+% % GIF: Starfish population on GBR -----------------------------------------
+% h2 = figure(9); clf, hold on, box on
 % % Plot outline of Australia
 % pt = patch(Outline(:, 1), Outline(:, 2), [1 1 1]);
 % xlim([140, 155])
 % ylim([-26, -8])
 % % Plot reef locations by colour based on starfish presence
-% for i = 1:length(lat)
-%     if N_y_2(i, end) > 0.5
-%         plot(lat(i), lon(i), '.', 'Markersize', 10, 'Color', [0.8500 0.3250 0.0980]);
+% for t = 1:length(t_vec)
+%     % Plot
+%     for i = 1:length(lat)
+%         if N_y_2(i, t) > 0.5
+%             p(i) = plot(lat(i), lon(i), '.', 'Markersize', 10, 'Color', [0.8500 0.3250 0.0980]);
+%         else
+%             p(i) = plot(lat(i), lon(i), '.', 'Markersize', 10, 'Color', [0.4660 0.6740 0.1880]);
+%         end
+%     end
+%     
+%     % Update title
+%     title(['Starfish population on GBR after ', num2str(t-1), ' years'])
+%     
+%     % Get current plot as image
+%     frame = getframe(h2);
+%     im = frame2im(frame);
+%     [im_ind, cm] = rgb2ind(im, 256);
+% 
+%     % Write to the gif file
+%     if t == 1
+%     elseif t == 2
+%         imwrite(im_ind, cm, 'Starfish.gif', 'gif', 'Loopcount', inf);
 %     else
-%         plot(lat(i), lon(i), '.', 'Markersize', 10, 'Color', [0.4660 0.6740 0.1880]);
+%         imwrite(im_ind, cm, 'Starfish.gif', 'gif', 'WriteMode', ...
+%                 'append', 'DelayTime', 0.1)
+%     end
+% 
+%     % Draw and delete the spheres, ready for the next frame
+%     drawnow
+%     if t < length(t_vec)
+%         delete(p)
 %     end
 % end
+
+% Starfish population on GBR ----------------------------------------------
+figure(9), clf, hold on, box on
+title(['Starfish population on GBR after ', num2str(t_end), ' years'])
+% Plot outline of Australia
+pt = patch(Outline(:, 1), Outline(:, 2), [1 1 1]);
+xlim([140, 155])
+ylim([-26, -8])
+% Plot reef locations by colour based on starfish presence
+for i = 1:length(lat)
+    if N_y_2(i, end) > 0.5
+        plot(lat(i), lon(i), '.', 'Markersize', 10, 'Color', [0.8500 0.3250 0.0980]);
+    else
+        plot(lat(i), lon(i), '.', 'Markersize', 10, 'Color', [0.4660 0.6740 0.1880]);
+    end
+end
 
 % % Connectivity of reefs ---------------------------------------------------
 % figure(10), clf, hold on, grid on
