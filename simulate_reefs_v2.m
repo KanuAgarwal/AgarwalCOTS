@@ -105,9 +105,9 @@ for t = t_0+1:t_end
 %         % Calculate population sizes for age 0 COTS depending on year -
 %         % based on Morello paper - testing base case model
 %         if t == 1
-%             N_y_0(i, t+1) = 1 + exp(4.307);
+%             N_y_0(i, t+1) = 1 + exp(4.292);
 %         elseif t == 3
-%             N_y_0(i, t+1) = exp(4.292) + 1;
+%             N_y_0(i, t+1) = exp(4.307) + 1;
 %         else
 %             N_y_0(i, t+1) = 2;
 %         end

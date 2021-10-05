@@ -309,6 +309,11 @@ end
 
 
 %% PLOT: Comparison of coral cover over time
+% Fontsizes for plotting
+axis_FS = 15;
+title_FS = 17;
+legend_FS = 13;
+ticks_FS = 12;
 
 % Total coral cover
 figure(11), clf, hold on, grid on
@@ -317,12 +322,15 @@ plot(t_vec_s1, coral_s1, 'Linewidth', 2)
 plot(t_vec_s2, coral_s2, 'Linewidth', 2)
 plot(t_vec_s3, coral_s3, 'Linewidth', 2)
 plot(t_vec_s4, coral_s4, 'Linewidth', 2)
-xlabel('Time (years)')
-ylabel('Total coral cover')
-title('Total coral cover on GBR for different control scenarios')
-legend('No control', '168 reefs, 8400 budget', '185 reefs, 9250 budget', ...
-       '336 reefs, 8400 budget', '672 reefs, 8400 budget', ...
-       'Location', 'NorthEastOutside')
+set(gca, 'FontSize', ticks_FS);
+xlabel('Time (years)', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
+ylabel('Coral cover (\% of reef area)', 'Interpreter', 'Latex', ...
+    'Fontsize', axis_FS)
+title('Total coral cover on GBR', ...
+    'Interpreter', 'Latex', 'Fontsize', title_FS)
+legend('No control', '100\% effort at 168 reefs', '100\% effort at 185 reefs', ...
+    '50\% effort at 336 reefs', '25\% effort at 672 reefs', ...
+    'Location', 'NorthEastOutside', 'Interpreter', 'Latex', 'Fontsize', legend_FS)
 
 % Coral cover at initiation box
 figure(12), clf, hold on, grid on
@@ -331,12 +339,14 @@ plot(t_vec_s1, coral_box_s1, 'Linewidth', 2)
 plot(t_vec_s2, coral_box_s2, 'Linewidth', 2)
 plot(t_vec_s3, coral_box_s3, 'Linewidth', 2)
 plot(t_vec_s4, coral_box_s4, 'Linewidth', 2)
-xlabel('Time (years)')
-ylabel('Total coral cover')
-title('Total coral cover at initiation box for different control scenarios')
-legend('No control', '168 reefs, 8400 budget', '185 reefs, 9250 budget', ...
-       '336 reefs, 8400 budget', '672 reefs, 8400 budget', ...
-       'Location', 'NorthEastOutside')
+xlabel('Time (years)', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
+ylabel('Coral cover (\% of reef area)', 'Interpreter', 'Latex', ...
+    'Fontsize', axis_FS)
+title('Total coral cover at initiation box', ...
+    'Interpreter', 'Latex', 'Fontsize', title_FS)
+legend('No control', '100\% effort at 168 reefs', '100\% effort at 185 reefs', ...
+    '50\% effort at 336 reefs', '25\% effort at 672 reefs', ...
+    'Location', 'NorthEastOutside', 'Interpreter', 'Latex', 'Fontsize', legend_FS)
 
    
 %% PLOT: Comparison of starfish population over time
@@ -348,12 +358,13 @@ plot(t_vec_s1, starfish_age2_s1, 'Linewidth', 2)
 plot(t_vec_s2, starfish_age2_s2, 'Linewidth', 2)
 plot(t_vec_s3, starfish_age2_s3, 'Linewidth', 2)
 plot(t_vec_s4, starfish_age2_s4, 'Linewidth', 2)
-xlabel('Time (years)')
-ylabel('Total age 2+ starfish population')
-title('Total starfish population on GBR for different control scenarios')
-legend('No control', '168 reefs, 8400 budget', '185 reefs, 9250 budget', ...
-       '336 reefs, 8400 budget', '672 reefs, 8400 budget', ...
-       'Location', 'NorthEastOutside')
+xlabel('Time (years)', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
+ylabel('No. of age 2+ starfish', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
+title('Total adult starfish population on GBR', ...
+    'Interpreter', 'Latex', 'Fontsize', title_FS)
+legend('No control', '100\% effort at 168 reefs', '100\% effort at 185 reefs', ...
+    '50\% effort at 336 reefs', '25\% effort at 672 reefs', ...
+    'Location', 'NorthEastOutside', 'Interpreter', 'Latex', 'Fontsize', legend_FS)
    
 
 % GBR - control only
@@ -362,24 +373,26 @@ plot(t_vec_s1, starfish_age2_s1, 'Linewidth', 2, 'Color', [0.8500 0.3250 0.0980]
 plot(t_vec_s2, starfish_age2_s2, 'Linewidth', 2, 'Color', [0.9290 0.6940 0.1250])
 plot(t_vec_s3, starfish_age2_s3, 'Linewidth', 2, 'Color', [0.4940 0.1840 0.5560])
 plot(t_vec_s4, starfish_age2_s4, 'Linewidth', 2, 'Color', [0.4660 0.6740 0.1880])
-xlabel('Time (years)')
-ylabel('Total age 2+ starfish population')
-title('Total starfish population on GBR for different control scenarios')
-legend('168 reefs, 8400 budget', '185 reefs, 9250 budget', ...
-       '336 reefs, 8400 budget', '672 reefs, 8400 budget', ...
-       'Location', 'NorthEastOutside')
-
+xlabel('Time (years)', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
+ylabel('No. of age 2+ starfish', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
+title('Total adult starfish population on GBR', ...
+    'Interpreter', 'Latex', 'Fontsize', title_FS)
+legend('100\% effort at 168 reefs', '100\% effort at 185 reefs', ...
+    '50\% effort at 336 reefs', '25\% effort at 672 reefs', ...
+    'Location', 'NorthEastOutside', 'Interpreter', 'Latex', 'Fontsize', legend_FS)
 
 % Initiation box
 figure(15), clf, hold on, grid on
 plot(t_vec_s0, starfish_age2_box_s0, 'Linewidth', 2)
 plot(t_vec_s1, starfish_age2_box_s1, 'Linewidth', 2)
-plot(t_vec_s2, starfish_age2_box_s2, 'Linewidth', 2)
+plot(t_vec_s2, starfish_age2_box_s2, '--', 'Linewidth', 2)
 plot(t_vec_s3, starfish_age2_box_s3, 'Linewidth', 2)
 plot(t_vec_s4, starfish_age2_box_s4, 'Linewidth', 2)
-xlabel('Time (years)')
-ylabel('Total age 2+ starfish population')
-title('Total starfish population at initiation box for different control scenarios')
-legend('No control', '168 reefs, 8400 budget', '185 reefs, 9250 budget', ...
-       '336 reefs, 8400 budget', '672 reefs, 8400 budget', ...
-       'Location', 'NorthEastOutside')
+xlabel('Time (years)', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
+ylabel('No. of age 2+ starfish', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
+title('Total adult starfish population at initiation box', ...
+    'Interpreter', 'Latex', 'Fontsize', title_FS)
+legend('No control', '100\% effort at 168 reefs', '100\% effort at 185 reefs', ...
+    '50\% effort at 336 reefs', '25\% effort at 672 reefs', ...
+    'Location', 'NorthEastOutside', 'Interpreter', 'Latex', 'Fontsize', legend_FS)
+   
