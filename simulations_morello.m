@@ -86,9 +86,10 @@ ticks_FS = 12;
 figure(2), clf, hold on, grid on
 plot(t_plot, C_y_f(1, :), 'Linewidth', 2)
 xlim([1994 2011])
+ylim([0 1])
 set(gca, 'FontSize', ticks_FS);
 xlabel('Time (years)', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
-ylabel('Coral cover (percentage of reef area)', 'Interpreter', 'Latex', ...
+ylabel('Coral cover (\% of reef area)', 'Interpreter', 'Latex', ...
     'Fontsize', axis_FS)
 title('Coral cover at single reef', 'Interpreter', 'Latex', 'Fontsize', title_FS)
 
@@ -107,11 +108,11 @@ plot(t_plot, N_y_0(1, :), 'Linewidth', 2)
 xlim([1994 2011])
 set(gca, 'FontSize', ticks_FS);
 xlabel('Time (years)', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
-ylabel('Number of starfish', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
-legend('Age 2+ (adult)', 'Age 1 (juvenile)', 'Age 0 (larvae)', ...
-    'Interpreter', 'Latex', 'Fontsize', legend_FS, 'Location', 'NorthEast')
+ylabel('No. of starfish', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
 title('Starfish population at single reef', 'Interpreter', 'Latex', ...
     'Fontsize', title_FS)
+legend('Age 2+ (adult)', 'Age 1 (juvenile)', 'Age 0 (larvae)', ...
+    'Interpreter', 'Latex', 'Fontsize', legend_FS, 'Location', 'NorthEastOutside')
 
 % Age 2 COTS --------------------------------------------------------------
 figure(5), clf, hold on, grid on
@@ -119,8 +120,8 @@ plot(t_plot, N_y_2(1, :), 'Linewidth', 2)
 xlim([1994 2011])
 set(gca, 'FontSize', ticks_FS);
 xlabel('Time (years)', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
-ylabel('Number of age 2+ (adult) starfish', 'Interpreter', 'Latex', ...
+ylabel('No. of age 2+ (adult) starfish', 'Interpreter', 'Latex', ...
     'Fontsize', axis_FS)
-title('Age 2+ starfish population at single reef', 'Interpreter', 'Latex', ...
+title('Adult starfish population at single reef', 'Interpreter', 'Latex', ...
     'Fontsize', title_FS)
 

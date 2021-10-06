@@ -34,6 +34,7 @@ params.p_1_f = 0.129;           % effect of COTS on fast-growing coral
 % Known or arbitrarily chosen by Morello et al. (2014)
 params.r_f = 0.5;               % intrinsic growth rate of fast-growing coral
 params.K_f = 1;                 % carrying capacity of fast-growing coral
+% params.K_f = 2500;              % carrying capacity of fast-growing coral
 params.p_2_f = 10;              % effect of COTS on fast-growing coral
 % params.r_m = 0.1;               % intrinsic growth rate of slow-growing coral
 % params.K_m = 500;               % carrying capacity of slow-growing coral
