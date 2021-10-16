@@ -1,4 +1,4 @@
-function [t_vec, C_y_f, N_y_2, N_y_1, N_y_0] = simulate_reefs_v2(num_reefs, t_end, params, initial_state, control_effort)
+function [t_vec, C_y_f, N_y_2, N_y_1, N_y_0, tau_ratio] = simulate_reefs_v2(num_reefs, t_end, params, initial_state, control_effort)
 
 % This function simulates starfish and coral populations at n reefs for t 
 % years. 
@@ -38,6 +38,8 @@ r_s = params.r_s;               % starfish larvae production rate
 omega_c = params.omega_c;       % coral larvae connectivity matrix
 omega_s = params.omega_s;       % starfish larvae connectivity matrix
 % A = params.A;                   % reef area i.e. coral carrying capacity
+lon = params.lon;               % longitude coordinates of each reef
+lat = params.lat;               % latitude coordinates of each reef
 
 % Initial state of the system
 C_0_f = initial_state.C_0_f;            % fast-growing coral
@@ -81,16 +83,39 @@ tau = zeros(num_reefs, length(t_vec)-1);                % starfish
 phi = zeros(num_reefs, length(t_vec)-1);                % coral
 gamma = zeros(num_reefs, length(t_vec)-1);              % starfish
 
+% Initialise array for starfish larvae ratio at initiation box - this will
+% be calculated for every timestep
+tau_ratio = zeros(1, t_end+1);
+tau_ratio(:, 1) = 1;                % start with larvae in only the box
+
 
 % SOLVE ===================================================================
 % Loop over and calculate population size through time
 for t = t_0+1:t_end
+    % Calculate starfish larvae ratio
+    tau_box_only = 0;       % starfish born at box and stay at box
+    tau_all = 0;            % starfish born anywhere and arrive at box
+    
     % Loop over and calculate population at each reef
     for i = 1:num_reefs
         % STARFISH ========================================================
         % Calculate starfish larval recruitment
         for j = 1:num_reefs
             tau(i, t) = tau(i, t) + omega_s(j, i) * N_y_2(j, t) * r_s;
+        end
+        
+        % Calculate starfish larval recruitment ratio for initiation box
+        % If reef is in box
+        if (lon(i) > -17 && lon(i) < -14.75) && (lat(i) > 145 && lat(i) < 147)
+            for j = 1:num_reefs
+                % Total larvae born everywhere and arrive at box
+                tau_all = tau_all + tau(j, t);
+                
+                % Total larvae born at box and stay at box
+                if (lon(j) > -17 && lon(j) < -14.75) && (lat(j) > 145 && lat(j) < 147)
+                    tau_box_only = tau_box_only + tau(j, t);
+                end
+            end
         end
 
 %         % Use Beverton-Holt model for starfish survival
@@ -178,6 +203,9 @@ for t = t_0+1:t_end
         end
         % =================================================================
     end
+    
+    % Calculate starfish larvae ratio
+    tau_ratio(t+1) = tau_box_only / tau_all;
 end
 
 % END =====================================================================
