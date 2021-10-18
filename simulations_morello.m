@@ -5,7 +5,7 @@ clear all
 % PARAMETERISATION ========================================================
 % PARAMETERS --------------------------------------------------------------
 % How long do we want to run the simulation for
-t_end = 17;                     % time in years
+t_end = 18;                     % time in years
 
 % This is for a single reef population
 num_reefs = 1;
@@ -20,8 +20,8 @@ params.p_1_f = 0.129;           % effect of COTS on fast-growing coral
 
 % Known or arbitrarily chosen by Morello et al. (2014)
 params.r_f = 0.5;               % intrinsic growth rate of fast-growing coral
-params.K_f = 1;                 % carrying capacity of fast-growing coral
-% params.K_f = 2500;              % carrying capacity of fast-growing coral
+% params.K_f = 1;                 % carrying capacity of fast-growing coral
+params.K_f = 2500;              % carrying capacity of fast-growing coral
 params.p_2_f = 10;              % effect of COTS on fast-growing coral
 % params.r_m = 0.1;               % intrinsic growth rate of slow-growing coral
 % params.K_m = 500;               % carrying capacity of slow-growing coral
@@ -32,6 +32,8 @@ params.r_c = 0;                 % coral larvae reproduction rate
 params.r_s = 0;                 % starfish larvae reproduction rate
 params.omega_c = 0;             % coral connectivity matric
 params.omega_s = 0;             % starfish connectivity matrix
+params.lon = 0;                 % reef longitude coordinates
+params.lat = 0;                 % reef latitutde coordinates
 
 
 % INITIAL SYSTEM STATE ----------------------------------------------------
@@ -58,13 +60,13 @@ control_effort = 0;
 [t_vec, C_y_f, N_y_2, N_y_1, N_y_0] = simulate_reefs_v2(num_reefs, t_end, params, initial_state, control_effort);
 
 % % Calculate coral cover from coral biomass
-% C_y_f_cover = C_y_f.^(2/3);
+C_y_f_cover = C_y_f.^(2/3);
 
 
 % PLOTS ===================================================================
 % Setup -------------------------------------------------------------------
 % Create new time vector for ploting
-t_plot = 1994:1:2011;
+t_plot = 1993:1:2011;
 
 % Fontsizes for plotting
 axis_FS = 15;
@@ -84,14 +86,14 @@ ticks_FS = 12;
 
 % Fast-growing coral cover ------------------------------------------------
 figure(2), clf, hold on, grid on
-plot(t_plot, C_y_f(1, :), 'Linewidth', 2)
-xlim([1994 2011])
+plot(t_plot, C_y_f_cover/max(C_y_f_cover), 'Linewidth', 2)
+xlim([1993 2011])
 ylim([0 1])
 set(gca, 'FontSize', ticks_FS);
 xlabel('Time (years)', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
 ylabel('Coral cover (\% of reef area)', 'Interpreter', 'Latex', ...
     'Fontsize', axis_FS)
-title('Coral cover at single reef', 'Interpreter', 'Latex', 'Fontsize', title_FS)
+title('Coral cover at Lizard Island', 'Interpreter', 'Latex', 'Fontsize', title_FS)
 
 % % Slow-growing coral cover ------------------------------------------------
 % figure(3), clf, hold on, grid on
@@ -105,23 +107,23 @@ figure(4), clf, hold on, grid on
 plot(t_plot, N_y_2(1, :), 'Linewidth', 2)
 plot(t_plot, N_y_1(1, :), 'Linewidth', 2)
 plot(t_plot, N_y_0(1, :), 'Linewidth', 2)
-xlim([1994 2011])
+xlim([1993 2011])
 set(gca, 'FontSize', ticks_FS);
 xlabel('Time (years)', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
 ylabel('No. of starfish', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
-title('Starfish population at single reef', 'Interpreter', 'Latex', ...
+title('Starfish population at Lizard Island', 'Interpreter', 'Latex', ...
     'Fontsize', title_FS)
 legend('Age 2+ (adult)', 'Age 1 (juvenile)', 'Age 0 (larvae)', ...
-    'Interpreter', 'Latex', 'Fontsize', legend_FS, 'Location', 'NorthEastOutside')
+    'Interpreter', 'Latex', 'Fontsize', legend_FS, 'Location', 'NorthEast')
 
 % Age 2 COTS --------------------------------------------------------------
 figure(5), clf, hold on, grid on
 plot(t_plot, N_y_2(1, :), 'Linewidth', 2)
-xlim([1994 2011])
+xlim([1993 2011])
 set(gca, 'FontSize', ticks_FS);
 xlabel('Time (years)', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
 ylabel('No. of age 2+ (adult) starfish', 'Interpreter', 'Latex', ...
     'Fontsize', axis_FS)
-title('Adult starfish population at single reef', 'Interpreter', 'Latex', ...
+title('Adult starfish population at Lizard Island', 'Interpreter', 'Latex', ...
     'Fontsize', title_FS)
 

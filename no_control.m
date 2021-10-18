@@ -126,8 +126,8 @@ set(gca, 'FontSize', ticks_FS);
 xlabel('Time (years)', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
 ylabel('Coral cover (\% of reef area)', 'Interpreter', 'Latex', ...
     'Fontsize', axis_FS)
-title('Total coral cover on GBR', 'Interpreter', 'Latex', ...
-    'Fontsize', title_FS)
+title('Total coral cover on GBR with no control', 'Interpreter', 'Latex', ...
+    'Fontsize', title_FS-1)
 
 % Total starfish over time ------------------------------------------------
 figure(14), clf, hold on, grid on
@@ -151,7 +151,7 @@ ylabel('No. of starfish', 'Interpreter', 'Latex', ...
 title('Total starfish population on GBR', 'Interpreter', 'Latex', ...
     'Fontsize', title_FS)
 legend('Age 2+ (adult)', 'Age 1 (juvenile)', 'Age 0 (larvae)', ...
-    'Interpreter', 'Latex', 'Fontsize', legend_FS, 'Location', 'NorthEastOutside')
+    'Interpreter', 'Latex', 'Fontsize', legend_FS, 'Location', 'NorthWest')
 
 % Log of all starfish
 figure(16), clf, hold on, grid on
@@ -162,10 +162,10 @@ set(gca, 'FontSize', ticks_FS);
 xlabel('Time (years)', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
 ylabel('log(no. of starfish)', 'Interpreter', 'Latex', ...
     'Fontsize', axis_FS)
-title('Total starfish population on GBR', 'Interpreter', 'Latex', ...
-    'Fontsize', title_FS)
+title('Total starfish population on GBR with no control', 'Interpreter', 'Latex', ...
+    'Fontsize', title_FS-1)
 legend('Age 2+ (adult)', 'Age 1 (juvenile)', 'Age 0 (larvae)', ...
-    'Interpreter', 'Latex', 'Fontsize', legend_FS, 'Location', 'NorthEastOutside')
+    'Interpreter', 'Latex', 'Fontsize', legend_FS, 'Location', 'NorthWest')
 
 % figure(5), clf, hold on, grid on
 % plot(t_vec, starfish_age1_s0, 'Linewidth', 2)
@@ -198,8 +198,8 @@ ylim([-26, -8])
 % Add labels
 set(gca, 'FontSize', ticks_FS);
 title('Starfish outbreak locations in initiation box', 'Interpreter', 'Latex', ...
-    'Fontsize', title_FS)
-legend([pr pg], 'Starfish', 'No starfish', 'Interpreter', 'Latex', ...
+    'Fontsize', title_FS-2)
+legend([pg pr], 'No starfish', '50 or more starfish', 'Interpreter', 'Latex', ...
     'Fontsize', legend_FS)
 
 
@@ -263,8 +263,8 @@ for i = 1:length(lat)
 end
 % Add labels
 set(gca, 'FontSize', ticks_FS);
-title(['Coral cover on GBR after ', num2str(t_end), ' years'], ...
-    'Interpreter', 'Latex', 'Fontsize', title_FS)
+title(['Coral cover after ', num2str(t_end), ' years with no control'], ...
+    'Interpreter', 'Latex', 'Fontsize', title_FS-2)
 legend([p1 p3 p2], 'Above 80\% coral cover', 'Below 80\% coral cover', ...
     'Less than 1\% coral cover', 'Interpreter', 'Latex', 'Fontsize', legend_FS)
 
@@ -318,7 +318,7 @@ xlim([140, 155])
 ylim([-26, -8])
 % Plot reef locations by colour based on starfish presence
 for i = 1:length(lat)
-    if N_y_2(i, end) > 50
+    if N_y_2(i, end) >= 50
         p4 = plot(lat(i), lon(i), '.', 'Markersize', 10, 'Color', red);
     elseif N_y_2(i, end) < 0.5
         p5 = plot(lat(i), lon(i), '.', 'Markersize', 10, 'Color', green);
@@ -328,7 +328,7 @@ for i = 1:length(lat)
 end
 % Add labels
 set(gca, 'FontSize', ticks_FS, 'BoxStyle', 'Full');
-title(['Adult starfish population on GBR after ', num2str(t_end), ' years'], ...
-    'Interpreter', 'Latex', 'Fontsize', title_FS)
-legend([p5 p6 p4], 'No starfish', '50 or less starfish', 'More than 50 starfish', ...
+title(['Adult starfish population after ', num2str(t_end), ' years with no control'], ...
+    'Interpreter', 'Latex', 'Fontsize', title_FS-2)
+legend([p5 p6 p4], 'No starfish', 'Less than 50 starfish', '50 or more starfish', ...
     'Interpreter', 'Latex', 'Fontsize', legend_FS)

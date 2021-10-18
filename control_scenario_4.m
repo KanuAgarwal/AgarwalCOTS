@@ -238,8 +238,8 @@ for i = 1:length(lat)
 end
 % Add labels
 set(gca, 'FontSize', ticks_FS);
-title(['Coral cover on GBR after ', num2str(t_end), ' years'], ...
-    'Interpreter', 'Latex', 'Fontsize', title_FS)
+title(['Coral cover after ', num2str(t_end), ' years with 25$\%$ effort at 672 reefs'], ...
+    'Interpreter', 'Latex', 'Fontsize', title_FS-2)
 legend([p1 p3 p2], 'Above 80\% coral cover', 'Below 80\% coral cover', ...
     'Less than 1\% coral cover', 'Interpreter', 'Latex', 'Fontsize', legend_FS)
 
@@ -302,8 +302,8 @@ for i = 1:length(lat)
 end
 % Add labels
 set(gca, 'FontSize', ticks_FS, 'BoxStyle', 'Full');
-title(['Adult starfish population on GBR after ', num2str(t_end), ' years'], ...
-    'Interpreter', 'Latex', 'Fontsize', title_FS)
+title(['Adult starfish population after ', num2str(t_end), ' years with 25$\%$ effort at 672 reefs'], ...
+    'Interpreter', 'Latex', 'Fontsize', title_FS-2)
 legend([p5 p6 p4], 'No starfish', '50 or less starfish', 'More than 50 starfish', ...
     'Interpreter', 'Latex', 'Fontsize', legend_FS)
 
