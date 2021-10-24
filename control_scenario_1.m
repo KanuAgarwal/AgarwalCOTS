@@ -19,7 +19,7 @@ clear lg lt
 
 % PARAMETERS --------------------------------------------------------------
 % How long do we want to run the simulation for
-t_end = 50;                     % time in years
+t_end = 100;                     % time in years
 
 % Get the number of reefs from the lat, long data
 num_reefs = length(lat);
@@ -29,12 +29,12 @@ num_reefs = length(lat);
 % Estimated by Morello et al. (2014)
 params.p_tilde = 0.258;         % effect of fast-growing coral on COTS     
 params.M_cots = 2.56;           % natural mortality of COTS 
-params.p_1_f = 0.129;           % effect of COTS on fast-growing coral
+params.p_1_f = 0.129/2500;      % effect of COTS on fast-growing coral
 
 % Known or arbitrarily chosen by Morello et al. (2014)
 params.r_f = 0.5;               % intrinsic growth rate of fast-growing coral
 params.K_f = 1;                 % carrying capacity of fast-growing coral
-params.p_2_f = 10;              % effect of COTS on fast-growing coral
+params.p_2_f = 10/2500;         % effect of COTS on fast-growing coral
 
 % Known or arbitrarily chosen by me
 params.r_c = 0.1;               % coral larvae reproduction rate
@@ -43,6 +43,13 @@ params.r_s = 5000;              % starfish larvae reproduction rate
 % Connectivity matrices from Bode et al. (2012)
 params.omega_c = psurv_d02_1122_P7;             % coral
 params.omega_s = psurv_d02_1122_P7;             % starfish
+
+% Latitude and longitude for starfish larval calculation
+params.lon = lon;
+params.lat = lat;
+
+% Using metapopulation model equation for larval dispersal
+dispersal_eq = 1;
 
 
 % INITIAL SYSTEM STATE ----------------------------------------------------
@@ -57,7 +64,7 @@ initial_state.N_0_2 = zeros(num_reefs, 1);
 % Look for reefs within the initiation box, and put some starfish there
 for i = 1:num_reefs
     if (lon(i) > -17 && lon(i) < -14.75) && (lat(i) > 145 && lat(i) < 147)
-        initial_state.N_0_2(i) = 100;
+        initial_state.N_0_2(i) = 50;
     end
 end
 
@@ -82,7 +89,8 @@ budget_s1 = sum(control_effort_s1, 'all')
 
 % SOLVE -------------------------------------------------------------------
 % Solve using function which runs simulations
-[t_vec, C_y_f, N_y_2, N_y_1, N_y_0] = simulate_reefs_v2(num_reefs, t_end, params, initial_state, control_effort_s1);
+[t_vec, C_y_f, N_y_2, N_y_1, N_y_0, ~] ...
+    = simulate_reefs_v2(num_reefs, t_end, params, initial_state, control_effort_s1, dispersal_eq);
 
 % Calculate coral cover and cots over time
 coral_s1 = sum(C_y_f, 1);
@@ -90,6 +98,17 @@ starfish_age2_s1 = sum(N_y_2, 1);
 starfish_age1_s1 = sum(N_y_1, 1);
 starfish_age0_s1 = sum(N_y_0, 1);
 
+% Count the number of reefs with less than 1% coral 
+coral_compare_all(1) = sum(C_y_f(:, end) < 0.01);
+
+% Count the number of reefs with between 1% and 5% coral
+coral_compare_all(2) = sum(C_y_f(:, end) >= 0.01 & C_y_f(:, end) < 0.05);
+
+% Count the number of reefs with between 5% and 30% coral
+coral_compare_all(3) = sum(C_y_f(:, end) >= 0.05 & C_y_f(:, end) < 0.3);
+
+% Count the number of reefs with more than 30%
+coral_compare_all(4) = sum(C_y_f(:, end) >= 0.3);
 
 % PLOTS ===================================================================
 % Define colours for plotting
@@ -98,10 +117,14 @@ red = [0.8500 0.3250 0.0980];
 orange = [0.9290 0.6940 0.1250];
 
 % Fontsizes for plotting
-axis_FS = 15;
-title_FS = 17;
+axis_FS = 14;
+title_FS = 15;
 legend_FS = 13;
 ticks_FS = 12;
+
+% Define viridis and magma palette colours 
+viridis_palette_4 = [253, 231, 37; 53, 183, 121; 49, 104, 142; 68, 1, 84];
+viridis_palette_4 = viridis_palette_4/255;
 
 
 % % Fast-growing coral heatmap ----------------------------------------------
@@ -124,52 +147,53 @@ ticks_FS = 12;
 % xlim([1 t_end+1])
 % ylim([0 num_reefs])
 
-% Total coral cover over time ---------------------------------------------
-figure(3), clf, hold on, grid on
-plot(t_vec, coral_s1, 'Linewidth', 2)
-set(gca, 'FontSize', ticks_FS);
-xlabel('Time (years)', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
-ylabel('Coral cover (\% of reef area)', 'Interpreter', 'Latex', ...
-    'Fontsize', axis_FS)
-title('Total coral cover on GBR', 'Interpreter', 'Latex', ...
-    'Fontsize', title_FS)
+% % Total coral cover over time ---------------------------------------------
+% figure(3), clf, hold on, grid on
+% plot(t_vec, coral_s1, 'Linewidth', 2)
+% set(gca, 'FontSize', ticks_FS);
+% xlabel('Time (years)', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
+% ylabel('Coral cover (\% of reef area)', 'Interpreter', 'Latex', ...
+%     'Fontsize', axis_FS)
+% title('Total coral cover on GBR', 'Interpreter', 'Latex', ...
+%     'Fontsize', title_FS)
 
-% Total starfish over time ------------------------------------------------
-figure(4), clf, hold on, grid on
-plot(t_vec, starfish_age2_s1, 'Linewidth', 2)
-set(gca, 'FontSize', ticks_FS);
-xlabel('Time (years)', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
-ylabel('No. of age 2+ (adult) starfish', 'Interpreter', 'Latex', ...
-    'Fontsize', axis_FS)
-title('Total adult starfish population on GBR', 'Interpreter', 'Latex', ...
-    'Fontsize', title_FS)
+% % Total starfish over time ------------------------------------------------
+% figure(4), clf, hold on, grid on
+% plot(t_vec, starfish_age2_s1, 'Linewidth', 2)
+% set(gca, 'FontSize', ticks_FS);
+% xlabel('Time (years)', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
+% ylabel('No. of age 2+ (adult) starfish', 'Interpreter', 'Latex', ...
+%     'Fontsize', axis_FS)
+% title('Total adult starfish population on GBR', 'Interpreter', 'Latex', ...
+%     'Fontsize', title_FS)
 
-% All starfish
-figure(5), clf, hold on, grid on
-plot(t_vec, starfish_age2_s1, 'Linewidth', 2)
-plot(t_vec, starfish_age1_s1, 'Linewidth', 2)
-plot(t_vec, starfish_age0_s1, 'Linewidth', 2)
-set(gca, 'FontSize', ticks_FS);
-xlabel('Time (years)', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
-ylabel('No. of starfish', 'Interpreter', 'Latex', ...
-    'Fontsize', axis_FS)
-title('Total starfish population on GBR', 'Interpreter', 'Latex', ...
-    'Fontsize', title_FS)
-legend('Age 2+ (adult)', 'Age 1 (juvenile)', 'Age 0 (larvae)', ...
-    'Interpreter', 'Latex', 'Fontsize', legend_FS, 'Location', 'NorthEastOutside')
+% % All starfish ------------------------------------------------------------
+% figure(5), clf, hold on, grid on
+% plot(t_vec, starfish_age2_s1, 'Linewidth', 2)
+% plot(t_vec, starfish_age1_s1, 'Linewidth', 2)
+% plot(t_vec, starfish_age0_s1, 'Linewidth', 2)
+% set(gca, 'FontSize', ticks_FS);
+% xlabel('Time (years)', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
+% ylabel('No. of starfish', 'Interpreter', 'Latex', ...
+%     'Fontsize', axis_FS)
+% title('Total starfish population on GBR', 'Interpreter', 'Latex', ...
+%     'Fontsize', title_FS)
+% legend('Age 2+ (adult)', 'Age 1 (juvenile)', 'Age 0 (larvae)', ...
+%     'Interpreter', 'Latex', 'Fontsize', legend_FS, 'Location', 'NorthEastOutside')
 
+% % Age 1 starfish ----------------------------------------------------------
 % figure(5), clf, hold on, grid on
 % plot(t_vec, starfish_age1_s1, 'Linewidth', 2)
 % xlabel('Time (years)')
 % ylabel('Total starfish')
 % title('Total age 1 starfish on GBR over time')
-% 
+
+% % Age 0 starfish ----------------------------------------------------------
 % figure(6), clf, hold on, grid on
 % plot(t_vec, starfish_age0_s1, 'Linewidth', 2)
 % xlabel('Time (years)')
 % ylabel('Total starfish')
 % title('Total age 0 starfish on GBR over time')
-
 
 % % Outbreak initiation on GBR ----------------------------------------------
 % figure(7), clf, hold on, box on
@@ -231,27 +255,32 @@ legend('Age 2+ (adult)', 'Age 1 (juvenile)', 'Age 0 (larvae)', ...
 % end
 
 % Coral cover on GBR ------------------------------------------------------
-figure(8), clf, hold on, box on
+figure(38), clf, hold on, box on
 % Plot outline of Australia
 pt = patch(Outline(:, 1), Outline(:, 2), [1 1 1], 'FaceColor', [0.8 0.8 0.8]);
 xlim([140, 155])
 ylim([-26, -8])
 % Plot reef locations by colour based on coral presence
 for i = 1:length(lat)
-    if C_y_f(i, end) > 0.8
-        p1 = plot(lat(i), lon(i), '.', 'Markersize', 10, 'Color', green);
-    elseif C_y_f(i, end) < 0.01
-        p2 = plot(lat(i), lon(i), '.', 'Markersize', 10, 'Color', red);
+    if C_y_f(i, end) >= 0.3
+        p1 = plot(lat(i), lon(i), '.', 'Markersize', 12, 'Color', viridis_palette_4(1, :));
+    elseif C_y_f(i, end) >= 0.05 && C_y_f(i, end) < 0.3
+        p2 = plot(lat(i), lon(i), '.', 'Markersize', 12, 'Color', viridis_palette_4(2, :));
+    elseif C_y_f(i, end) >= 0.01 && C_y_f(i, end) < 0.05
+        p3 = plot(lat(i), lon(i), '.', 'Markersize', 12, 'Color', viridis_palette_4(3, :));
     else
-        p3 = plot(lat(i), lon(i), '.', 'Markersize', 10, 'Color', orange);
+        p4 = plot(lat(i), lon(i), '.', 'Markersize', 12, 'Color', viridis_palette_4(4, :));
     end
 end
 % Add labels
 set(gca, 'FontSize', ticks_FS);
-title(['Coral cover on GBR after ', num2str(t_end), ' years'], ...
+title(['Coral cover after ', num2str(t_end), ' years with 100\% effort at 168 reefs'], ...
     'Interpreter', 'Latex', 'Fontsize', title_FS)
-legend([p1 p3 p2], 'Above 80\% coral cover', 'Below 80\% coral cover', ...
-    'Less than 1\% coral cover', 'Interpreter', 'Latex', 'Fontsize', legend_FS)
+[h, icons] = legend([p1 p2 p3 p4], '$>$30\% coral cover', '5$-$30\% coral cover', '1$-$5\% coral cover', ...
+    '$<$1\% coral cover', 'Interpreter', 'Latex', 'Fontsize', legend_FS);
+icons = findobj(icons, 'Type', 'line');
+icons = findobj(icons, 'Marker', 'none', '-xor');
+set(icons, 'MarkerSize', 25)
 
 % % GIF: Starfish population on GBR -----------------------------------------
 % h2 = figure(9); clf, hold on, box on
@@ -294,42 +323,42 @@ legend([p1 p3 p2], 'Above 80\% coral cover', 'Below 80\% coral cover', ...
 %     end
 % end
 
-% Starfish population on GBR ----------------------------------------------
-figure(9), clf, hold on, box on
-% Plot outline of Australia
-pt = patch(Outline(:, 1), Outline(:, 2), [1 1 1], 'FaceColor', [0.8 0.8 0.8]);
-xlim([140, 155])
-ylim([-26, -8])
-% Plot reef locations by colour based on starfish presence
-for i = 1:length(lat)
-    if N_y_2(i, end) > 10
-        p4 = plot(lat(i), lon(i), '.', 'Markersize', 10, 'Color', red);
-    elseif N_y_2(i, end) < 0.5
-        p5 = plot(lat(i), lon(i), '.', 'Markersize', 10, 'Color', green);
-    else
-        p6 = plot(lat(i), lon(i), '.', 'Markersize', 10, 'Color', orange);
-    end
-end
-% Add labels
-set(gca, 'FontSize', ticks_FS, 'BoxStyle', 'Full');
-title(['Adult starfish population on GBR after ', num2str(t_end), ' years'], ...
-    'Interpreter', 'Latex', 'Fontsize', title_FS)
-legend([p5 p6 p4], 'No starfish', '10 or less starfish', 'More than 10 starfish', ...
-    'Interpreter', 'Latex', 'Fontsize', legend_FS)
+% % Starfish population on GBR ----------------------------------------------
+% figure(9), clf, hold on, box on
+% % Plot outline of Australia
+% pt = patch(Outline(:, 1), Outline(:, 2), [1 1 1], 'FaceColor', [0.8 0.8 0.8]);
+% xlim([140, 155])
+% ylim([-26, -8])
+% % Plot reef locations by colour based on starfish presence
+% for i = 1:length(lat)
+%     if N_y_2(i, end) > 10
+%         p4 = plot(lat(i), lon(i), '.', 'Markersize', 10, 'Color', red);
+%     elseif N_y_2(i, end) < 0.5
+%         p5 = plot(lat(i), lon(i), '.', 'Markersize', 10, 'Color', green);
+%     else
+%         p6 = plot(lat(i), lon(i), '.', 'Markersize', 10, 'Color', orange);
+%     end
+% end
+% % Add labels
+% set(gca, 'FontSize', ticks_FS, 'BoxStyle', 'Full');
+% title(['Adult starfish population on GBR after ', num2str(t_end), ' years'], ...
+%     'Interpreter', 'Latex', 'Fontsize', title_FS)
+% legend([p5 p6 p4], 'No starfish', '10 or less starfish', 'More than 10 starfish', ...
+%     'Interpreter', 'Latex', 'Fontsize', legend_FS)
 
-% Reefs being controlled on GBR -------------------------------------------
-figure(10), clf, hold on, box on
-% Plot outline of Australia
-pt = patch(Outline(:, 1), Outline(:, 2), [1 1 1], 'FaceColor', [0.8 0.8 0.8]);
-% Plot reef locations by color depending on initial cots numbers
-for i = 1:num_reefs
-    if control_effort_s1(i, 1) > 0
-        plot(lat(i), lon(i), 'r.', 'Markersize', 10)
-    else
-        plot(lat(i), lon(i), '.', 'Markersize', 10, 'Color', 0.7.*ones(1,3))
-    end
-end
-% Focus the figure on GBR and QLD
-xlim([140, 155])
-ylim([-26, -8])
-title('Starfish control locations on the GBR')
+% % Reefs being controlled on GBR -------------------------------------------
+% figure(10), clf, hold on, box on
+% % Plot outline of Australia
+% pt = patch(Outline(:, 1), Outline(:, 2), [1 1 1], 'FaceColor', [0.8 0.8 0.8]);
+% % Plot reef locations by color depending on initial cots numbers
+% for i = 1:num_reefs
+%     if control_effort_s1(i, 1) > 0
+%         plot(lat(i), lon(i), 'r.', 'Markersize', 10)
+%     else
+%         plot(lat(i), lon(i), '.', 'Markersize', 10, 'Color', 0.7.*ones(1,3))
+%     end
+% end
+% % Focus the figure on GBR and QLD
+% xlim([140, 155])
+% ylim([-26, -8])
+% title('Starfish control locations on the GBR')

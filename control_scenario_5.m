@@ -44,6 +44,13 @@ params.r_s = 5000;              % starfish larvae reproduction rate
 params.omega_c = psurv_d02_1122_P7;             % coral
 params.omega_s = psurv_d02_1122_P7;             % starfish
 
+% Latitude and longitude for starfish larval calculation
+params.lon = lon;
+params.lat = lat;
+
+% Using metapopulation model equation for larval dispersal
+dispersal_eq = 1;
+
 
 % INITIAL SYSTEM STATE ----------------------------------------------------
 % CORAL
@@ -80,7 +87,8 @@ budget_s5 = sum(control_effort_s5, 'all')
 
 % SOLVE -------------------------------------------------------------------
 % Solve using function which runs simulations
-[t_vec, C_y_f, N_y_2, N_y_1, N_y_0] = simulate_reefs_v2(num_reefs, t_end, params, initial_state, control_effort_s5);
+[t_vec, C_y_f, N_y_2, N_y_1, N_y_0, ~] = ...
+    simulate_reefs_v2(num_reefs, t_end, params, initial_state, control_effort_s5, dispersal_eq);
 
 % Calculate coral cover and cots over time
 coral_s5 = sum(C_y_f, 1);
@@ -100,6 +108,14 @@ axis_FS = 15;
 title_FS = 17;
 legend_FS = 13;
 ticks_FS = 12;
+
+% Load colormaps
+jet=colormap('jet');
+parula=fake_parula();
+magma=magma();
+inferno=inferno();
+plasma=plasma();
+viridis=viridis();
 
 
 % % Fast-growing coral heatmap ----------------------------------------------
@@ -215,7 +231,7 @@ title('Total adult starfish population on GBR', 'Interpreter', 'Latex', ...
 % end
 
 % Coral cover on GBR ------------------------------------------------------
-figure(8), clf, hold on, box on
+figure(28), clf, hold on, box on
 % Plot outline of Australia
 pt = patch(Outline(:, 1), Outline(:, 2), [1 1 1], 'FaceColor', [0.8 0.8 0.8]);
 xlim([140, 155])
@@ -236,6 +252,22 @@ title(['Coral cover on GBR after ', num2str(t_end), ' years'], ...
     'Interpreter', 'Latex', 'Fontsize', title_FS)
 legend([p1 p3 p2], 'Above 80\% coral cover', 'Below 80\% coral cover', ...
     'Less than 1\% coral cover', 'Interpreter', 'Latex', 'Fontsize', legend_FS)
+
+% Coral cover on GBR (colormap) -------------------------------------------
+figure(19), clf, hold on, box on
+% Plot outline of Australia
+pt = patch(Outline(:, 1), Outline(:, 2), [1 1 1], 'FaceColor', [0.8 0.8 0.8]);
+% Plot reef locations by color depending on initial cots numbers
+scatter(lat, lon, 10, C_y_f(:, end), 'filled')
+colorbar
+colormap(viridis)
+% Focus the figure on GBR and QLD
+xlim([140, 155])
+ylim([-26, -8])
+% Add labels
+set(gca, 'FontSize', ticks_FS, 'BoxStyle', 'Full');
+title(['Coral cover after ', num2str(t_end), ' years with no control'], ...
+    'Interpreter', 'Latex', 'Fontsize', title_FS)
 
 % % GIF: Starfish population on GBR -----------------------------------------
 % h2 = figure(9); clf, hold on, box on

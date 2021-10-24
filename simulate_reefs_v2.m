@@ -1,4 +1,5 @@
-function [t_vec, C_y_f, N_y_2, N_y_1, N_y_0, tau_ratio] = simulate_reefs_v2(num_reefs, t_end, params, initial_state, control_effort)
+function [t_vec, C_y_f, N_y_2, N_y_1, N_y_0, tau_ratio] ...
+    = simulate_reefs_v2(num_reefs, t_end, params, initial_state, control_effort, dispersal_eq)
 
 % This function simulates starfish and coral populations at n reefs for t 
 % years. 
@@ -12,11 +13,22 @@ function [t_vec, C_y_f, N_y_2, N_y_1, N_y_0, tau_ratio] = simulate_reefs_v2(num_
 %   control_effort = an matrix (size n x t-1) with control effort at each
 %                    reef over time, or a constant for constant or no
 %                    control effort 
+%   dispersal_eq   = an option to choose the larval dispersal equation
+%                    where 0 = Morello et al. (2014) equation
+%                          1 = Metapopulation model with connectivity
 %
 % The function outputs are:
-%   t_vec = a vector of time (in years) that the simulation is run over
-%   x     = a matrix of coral cover for each reef over time
-%   y     = a matrix of starfish poopulations for each reef over time
+%   t_vec     = a vector of time (in years) that the simulation is run over
+%   C_y_f     = a matrix of coral cover for each reef over time
+%   N_y_2     = a matrix of age 2+ starfish populations for each reef over 
+%               time
+%   N_y_1     = a matrix of age 1 starfish populations for each reef over 
+%               time
+%   N_y_0     = a matrix of age 0 starfish populations for each reef over 
+%               time
+%   tau_ratio = the ratio of larvae born at initiation box that settle at
+%               initiation box, compared to all larvae settling at
+%               initiation box
 
 
 % PARAMETERS ==============================================================
@@ -79,13 +91,18 @@ end
 % Matrices for larval recruitment before mortality
 sigma = zeros(num_reefs, length(t_vec)-1);              % coral
 tau = zeros(num_reefs, length(t_vec)-1);                % starfish
-% Matrices for larval recruitment after mortality
-phi = zeros(num_reefs, length(t_vec)-1);                % coral
-gamma = zeros(num_reefs, length(t_vec)-1);              % starfish
+% % Matrices for larval recruitment after mortality
+% phi = zeros(num_reefs, length(t_vec)-1);                % coral
+% gamma = zeros(num_reefs, length(t_vec)-1);              % starfish
+
+% Initialise matrices for other functions in model
+f_of_C = zeros(num_reefs, length(t_vec)-1);
+rho_y = zeros(num_reefs, length(t_vec)-1);
+Q_y_f = zeros(num_reefs, length(t_vec)-1);
 
 % Initialise array for starfish larvae ratio at initiation box - this will
 % be calculated for every timestep
-tau_ratio = zeros(1, t_end+1);
+tau_ratio = zeros(1, length(t_vec));
 tau_ratio(:, 1) = 1;                % start with larvae in only the box
 
 
@@ -97,56 +114,65 @@ for t = t_0+1:t_end
     tau_all = 0;            % starfish born anywhere and arrive at box
     
     % Loop over and calculate population at each reef
-    for i = 1:num_reefs
+    for i = 1:num_reefs        
         % STARFISH ========================================================
-        % Calculate starfish larval recruitment
-        for j = 1:num_reefs
-            tau(i, t) = tau(i, t) + omega_s(j, i) * N_y_2(j, t) * r_s;
-        end
-        
-        % Calculate starfish larval recruitment ratio for initiation box
-        % If reef is in box
-        if (lon(i) > -17 && lon(i) < -14.75) && (lat(i) > 145 && lat(i) < 147)
+        % Decide which dispersal equation to use
+        % Morello et al. (2014) equation ----------------------------------
+        if dispersal_eq == 0
+            % Calculate population sizes for age 0 COTS depending on year -
+            % based on Morello paper - testing base case model
+            if t == 1
+                N_y_0(i, t+1) = 1 + exp(4.292);
+            elseif t == 3
+                N_y_0(i, t+1) = exp(4.307)*100 + 1;
+            else
+                N_y_0(i, t+1) = 2;
+            end
+            
+        % Metapopulation model with connectivity --------------------------
+        elseif dispersal_eq == 1
+            % Calculate starfish larval recruitment
             for j = 1:num_reefs
-                % Total larvae born everywhere and arrive at box
-                tau_all = tau_all + tau(j, t);
-                
-                % Total larvae born at box and stay at box
-                if (lon(j) > -17 && lon(j) < -14.75) && (lat(j) > 145 && lat(j) < 147)
-                    tau_box_only = tau_box_only + tau(j, t);
+                tau(i, t) = tau(i, t) + omega_s(j, i) * N_y_2(j, t) * r_s;
+            end
+
+            % Calculate starfish larval recruitment ratio for initiation box
+            % If reef is in box
+            if (lon(i) > -17 && lon(i) < -14.75) && (lat(i) > 145 && lat(i) < 147)
+                for j = 1:num_reefs
+                    % Total larvae born everywhere and arrive at box
+                    tau_all = tau_all + tau(j, t);
+
+                    % Total larvae born at box and stay at box
+                    if (lon(j) > -17 && lon(j) < -14.75) && (lat(j) > 145 && lat(j) < 147)
+                        tau_box_only = tau_box_only + tau(j, t);
+                    end
                 end
             end
+        
+%             % Use Beverton-Holt model for starfish survival
+%             gamma(i, t) = (rho * tau(i, t)) / (1 + K * tau(i, t));
+%             gamma(i, t) = (rho * tau(i, t)) / (1 + (rho - 1)/K * tau(i, t));
+% 
+%             % Check gamma isn't negative
+%             if gamma(i, t) < 0
+%                 gamma(i, t) = 0;
+%             end
+
+            % Calculate population sizes for age 0 COTS
+            N_y_0(i, t+1) = tau(i, t);
         end
-
-%         % Use Beverton-Holt model for starfish survival
-%         gamma(i, t) = (rho * tau(i, t)) / (1 + K * tau(i, t));
-%         gamma(i, t) = (rho * tau(i, t)) / (1 + (rho - 1)/K * tau(i, t));
-        
-%         % Check gamma isn't negative
-%         if gamma(i, t) < 0
-%             gamma(i, t) = 0;
-%         end
-
-%         % Calculate population sizes for age 0 COTS depending on year -
-%         % based on Morello paper - testing base case model
-%         if t == 1
-%             N_y_0(i, t+1) = 1 + exp(4.292);
-%         elseif t == 3
-%             N_y_0(i, t+1) = exp(4.307) + 1;
-%         else
-%             N_y_0(i, t+1) = 2;
-%         end
-        
-        % Calculate population sizes for age 0 COTS
-        N_y_0(i, t+1) = tau(i, t);
+        % End -------------------------------------------------------------
         
         % Functions to help calculate age 1 and 2+ COTS population sizes
-        f_of_C = 1 - p_tilde * (C_y_f(i, t) / (1 + C_y_f(i, t)));
+        f_of_C(i, t) = 1 - p_tilde * (C_y_f(i, t) / (1 + C_y_f(i, t)));
 
         % Calculate population sizes for age 1 and 2+ COTS
-        N_y_1(i, t+1) = N_y_0(i, t) * exp(-f_of_C * M_cots);
-        N_y_2(i, t+1) = (N_y_1(i, t) + N_y_2(i, t)) * exp(-f_of_C * M_cots) ...
-                            - k(i, t) * N_y_2(i, t);
+        N_y_1(i, t+1) = N_y_0(i, t) * exp(-f_of_C(i, t) * M_cots);
+%         N_y_2(i, t+1) = (N_y_1(i, t) + N_y_2(i, t)) * exp(-f_of_C(i, t) * M_cots) ...
+%                             - k(i, t) * N_y_2(i, t);
+        N_y_2(i, t+1) = N_y_1(i, t) * exp(-f_of_C(i, t) * M_cots) ...
+                            + (1 - k(i, t)) * N_y_2(i, t) * exp(-f_of_C(i, t) * M_cots);
         
         % CORAL ===========================================================
         % Calculate coral larval recuitment
@@ -162,11 +188,11 @@ for t = t_0+1:t_end
 %         end
                         
         % Function for calculating different coral population sizes
-        rho_y = exp(-5 * C_y_f(i, t) / K_f);
+        rho_y(i, t) = exp(-5 * C_y_f(i, t) / K_f);
 %         rho_y = 1 / (1 + exp(-70 * (C_y_f(i, t) / (K_f - 0.1))));
         
         % Fast-growing coral mortality from COTS 
-        Q_y_f = (1-rho_y) * (p_1_f * (N_y_1(i, t) + N_y_2(i, t)) * C_y_f(i, t)) ...
+        Q_y_f(i, t) = (1-rho_y(i, t)) * (p_1_f * (N_y_1(i, t) + N_y_2(i, t)) * C_y_f(i, t)) ...
                     / (1 + exp( -(N_y_1(i, t) + N_y_2(i, t)) / p_2_f));
 
 %         % Slow-growing coral mortality from COTS
@@ -175,7 +201,7 @@ for t = t_0+1:t_end
 
         % Calculate population size for fast-growing coral
         C_y_f(i, t+1) = C_y_f(i, t) + r_f * C_y_f(i, t) * (1 - C_y_f(i, t)/K_f) ...
-                            - Q_y_f + sigma(i, t);
+                            - Q_y_f(i, t) + sigma(i, t);
         
 %         % Calculate population size for slow-growing coral
 %         C_y_m(i, t+1) = C_y_m(i, t) + r_m * C_y_m(i, t) * (1 - C_y_m(i, t)/K_m) - Q_y_m;
@@ -190,22 +216,80 @@ for t = t_0+1:t_end
 %             C_y_m(i, t+1) = 0;          % slow-growing coral
 %         end
         
-        if N_y_0(i, t+1) < 0
-            N_y_0(i, t+1) = 0;          % age 0 COTS
-        end
-        
-        if N_y_1(i, t+1) < 0
-            N_y_1(i, t+1) = 0;          % age 1 COTS
-        end
-        
-        if N_y_2(i, t+1) < 0            % age 2+ COTS
-            N_y_2(i, t+1) = 0;
-        end
-        % =================================================================
+%         if N_y_0(i, t+1) < 0
+%             N_y_0(i, t+1) = 0;          % age 0 COTS
+%         end
+%         
+%         if N_y_1(i, t+1) < 0
+%             N_y_1(i, t+1) = 0;          % age 1 COTS
+%         end
+%         
+%         if N_y_2(i, t+1) < 0            % age 2+ COTS
+%             N_y_2(i, t+1) = 0;
+%         end
     end
+    % END =================================================================
     
     % Calculate starfish larvae ratio
-    tau_ratio(t+1) = tau_box_only / tau_all;
+    if dispersal_eq == 1
+        tau_ratio(t+1) = tau_box_only / tau_all;
+    end
 end
 
 % END =====================================================================
+
+% Debugging and plots code ------------------------------------------------
+% keyboard
+
+% figure, clf, hold on
+% plot(t_vec, C_y_f(1000, :), 'Linewidth', 2)
+% plot(t_vec(2:end), C_y_f(1000, 1:end-1), 'Linewidth', 2)
+% plot(t_vec(2:end), ...
+%     r_f * C_y_f(1000, 1:end-1) .* (ones(1, 100) - C_y_f(1000, 1:end-1)/K_f), ...
+%     'Linewidth', 2)
+% plot(t_vec(2:end), sigma(1000, :), 'Linewidth', 2)
+% plot(t_vec(2:end), rho_y(1000, :), 'Linewidth', 2)
+% plot(t_vec(2:end), Q_y_f(1000, :), 'Linewidth', 2)
+
+% figure, clf, hold on
+% plot(t_vec, N_y_2(1000, :), 'Linewidth', 2)
+% plot(t_vec(2:end), ...
+%     (N_y_1(1000, 1:end-1) + N_y_2(1000, 1:end-1)) .* exp(-f_of_C(1000, :) * M_cots), ...
+%     'Linewidth', 2)
+% plot(t_vec(2:end), k(1000, :) .* N_y_2(1000, 1:end-1), 'Linewidth', 2)
+% xlim([0 10])
+% plot(t_vec(2:end), ...
+%     (N_y_1(1000, 1:end-1)) .* exp(-f_of_C(1000, :) * M_cots), ...
+%     'Linewidth', 2)
+% plot(t_vec(2:end), ...
+%     (N_y_2(1000, 1:end-1)) .* exp(-f_of_C(1000, :) * M_cots), ...
+%     'Linewidth', 2)
+
+% figure, clf, hold on
+% plot(t_vec, N_y_2(1000, :), 'Linewidth', 2)
+% plot(t_vec(2:end), ...
+%     N_y_1(1000, 1:end-1) .* exp(-f_of_C(1000, :) * M_cots), ...
+%     'Linewidth', 2)
+% xlim([0 10])
+% plot(t_vec(2:end), ...
+%     (ones(1,100) - k(1000, :)) .* N_y_2(1000, 1:end-1) .* exp(-f_of_C(1000, :) * M_cots), ...
+%     'Linewidth', 2)
+% plot(t_vec(2:end), (ones(1,100) - k(1000, :)) .* N_y_2(1000, 1:end-1), 'Linewidth', 2)
+% plot(t_vec(2:end), ...
+%     - k(1000, :) .* N_y_2(1000, 1:end-1) .* exp(-f_of_C(1000, :) * M_cots), ...
+%     'Linewidth', 2)
+
+% figure, clf, hold on
+% plot(t_vec, N_y_1(1000, :), 'Linewidth', 2)
+% xlim([0 10])
+
+% figure, clf, hold on
+% plot(t_vec, C_y_f(1000, :), 'Linewidth', 2)
+% xlim([0 10])
+% 
+% figure(26), clf, hold on
+% plot(t_vec(2:end), f_of_C(1000, :), 'Linewidth', 2)
+% plot(t_vec(2:end), ...
+%     ones(1, 100) - p_tilde * ((2500*C_y_f(1000, 1:end-1))/(1 + (2500*C_y_f(1000, 1:end-1)))), ...
+%     'Linewidth', 2)
+% xlim([0 10])
