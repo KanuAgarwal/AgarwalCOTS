@@ -292,9 +292,9 @@ control_plot = [control_1_plot control_2_plot control_3_plot control_4_plot];
 
 %% PLOTS
 % Fontsizes for plotting
-axis_FS = 14;
+axis_FS = 15;
 title_FS = 16;
-legend_FS = 12;
+legend_FS = 13;
 ticks_FS = 12;
 
 % Colours for plotting
@@ -342,7 +342,7 @@ b(3).FaceColor = viridis_palette_4(2, :);
 b(4).FaceColor = viridis_palette_4(1, :);
 set(gca, 'FontSize', ticks_FS+1);
 set(gca, 'TickLabelInterpreter', 'Latex')
-title('Number of additional reefs with $x\%$ coral cover compared to no control', ...
+title('\qquad\qquad\qquad Number of additional reefs with $x\%$ coral cover compared to no control after 100 years', ...
     'Interpreter', 'Latex', 'Fontsize', title_FS);
 xlabel('Control scenario', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
 xh = get(gca,'xlabel');
@@ -352,13 +352,13 @@ set(xh,'position',px)
 ylabel('No. of additional reefs', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
 legend('$x<1$\% coral cover', '$1\%\leq x<5\%$ coral cover', ...
     '$5\%\leq x<30\%$ coral cover', '$x\geq 30\%$ coral cover', ...
-    'Interpreter', 'Latex', 'Fontsize', legend_FS+1, 'Location', 'NorthEastOutside');
+    'Interpreter', 'Latex', 'Fontsize', legend_FS, 'Location', 'NorthEastOutside');
 
 
 %% CORAL ==================================================================
 % GBR total coral cover ---------------------------------------------------
 figure(1), clf, hold on
-yline(num_reefs, '--', 'Linewidth', 2, 'Color', [0.8 0.8 0.8])
+yline(num_reefs, '--', 'Linewidth', 2, 'Color', [0.5 0.5 0.5])
 plot(t_vec_s0, coral_s0, 'Linewidth', 2, 'Color', 'black')
 plot(t_vec_s1, coral_s1, 'Linewidth', 2, 'Color', colour_scheme(1, :))
 plot(t_vec_s2, coral_s2, 'Linewidth', 2, 'Color', colour_scheme(2, :))
@@ -384,7 +384,7 @@ set(gca, 'FontSize', ticks_FS);
 xlabel('Time (years)', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
 ylabel('Total coral cover increase', 'Interpreter', 'Latex', ...
     'Fontsize', axis_FS)
-title('Total coral cover increase over no control on GBR', ...
+title('Total coral cover increase on GBR compared to no control', ...
     'Interpreter', 'Latex', 'Fontsize', title_FS)
 legend('100\% effort at 168 reefs', '50\% effort at 336 reefs', ...
     '25\% effort at 672 reefs', '7.72\% effort at 2175 reefs', ...
@@ -392,7 +392,7 @@ legend('100\% effort at 168 reefs', '50\% effort at 336 reefs', ...
 
 % Initiation box total coral cover ----------------------------------------
 figure(3), clf, hold on
-yline(nnz(initial_state.N_0_2), '--', 'Linewidth', 2, 'Color', [0.8 0.8 0.8])
+yline(nnz(initial_state.N_0_2), '--', 'Linewidth', 2, 'Color', [0.5 0.5 0.5])
 plot(t_vec_s0, coral_box_s0, 'Linewidth', 2, 'Color', 'black')
 plot(t_vec_s1, coral_box_s1, 'Linewidth', 2, 'Color', colour_scheme(1, :))
 plot(t_vec_s2, coral_box_s2, 'Linewidth', 2, 'Color', colour_scheme(2, :))
@@ -418,7 +418,7 @@ set(gca, 'FontSize', ticks_FS);
 xlabel('Time (years)', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
 ylabel('Total coral cover increase', 'Interpreter', 'Latex', ...
     'Fontsize', axis_FS)
-title('Total coral cover increase over no control at initiation box', ...
+title('\qquad\qquad Total coral cover increase at initiation box compared to no control', ...
     'Interpreter', 'Latex', 'Fontsize', title_FS)
 legend('100\% effort at 168 reefs', '50\% effort at 336 reefs', ...
     '25\% effort at 672 reefs', '7.72\% effort at 2175 reefs', ...
@@ -469,8 +469,8 @@ set(gca, 'YScale', 'log')
 set(gca, 'FontSize', ticks_FS)
 xlabel('Time (years)', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
 ylabel('Total adult starfish decrease', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
-title('\qquad\qquad\qquad\qquad\qquad Total decrease in adult starfish population over no control on GBR', ...
-    'Interpreter', 'Latex', 'Fontsize', title_FS)
+title('\qquad\qquad\qquad\qquad\qquad\qquad Total decrease in adult starfish population on GBR compared to no control', ...
+    'Interpreter', 'Latex', 'Fontsize', title_FS-1)
 legend('100\% effort at 168 reefs', '50\% effort at 336 reefs', ...
     '25\% effort at 672 reefs', '7.72\% effort at 2175 reefs', ...
     'Location', 'NorthEastOutside', 'Interpreter', 'Latex', 'Fontsize', legend_FS)
@@ -524,7 +524,7 @@ legend('No control', '100\% effort at 168 reefs', '50\% effort at 336 reefs', ..
     '25\% effort at 672 reefs', '7.72\% effort at 2175 reefs', ...
     'Location', 'NorthEastOutside', 'Interpreter', 'Latex', 'Fontsize', legend_FS)
 
-% Initiation box decrease in age 2+ starfish (log scale--------------------
+% Initiation box decrease in age 2+ starfish (log scale) ------------------
 figure(9), clf, hold on
 plot(t_vec_s1, starfish_age2_box_s0-starfish_age2_box_s1, 'Linewidth', 2, 'Color', colour_scheme(1, :))
 plot(t_vec_s2, starfish_age2_box_s0-starfish_age2_box_s2, 'Linewidth', 2, 'Color', colour_scheme(2, :))
@@ -535,8 +535,8 @@ set(gca, 'YScale', 'log')
 set(gca, 'FontSize', ticks_FS)
 xlabel('Time (years)', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
 ylabel('Total adult starfish decrease', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
-title('\qquad\qquad\qquad\qquad\qquad\qquad Total decrease in adult starfish population over no control at initiation box', ...
-    'Interpreter', 'Latex', 'Fontsize', title_FS)
+title('\quad\qquad\qquad\qquad\qquad\qquad\qquad\qquad Total decrease in adult starfish population at initiation box compared to no control', ...
+    'Interpreter', 'Latex', 'Fontsize', title_FS-1)
 legend('100\% effort at 168 reefs', '50\% effort at 336 reefs', ...
     '25\% effort at 672 reefs', '7.72\% effort at 2175 reefs', ...
     'Location', 'NorthEastOutside', 'Interpreter', 'Latex', 'Fontsize', legend_FS)
@@ -721,48 +721,72 @@ legend('100\% effort at 168 reefs', '50\% effort at 336 reefs', ...
 % %     '25\% effort at 672 reefs', '7.72\% effort at 2175 reefs', ...
 % %     'Location', 'NorthEastOutside', 'Interpreter', 'Latex', 'Fontsize', legend_FS)
 
+%% CORAL COVER MAP ========================================================
+% Coral cover on GBR (colormap) -------------------------------------------
+figure(22), clf, hold on, box on
+% Plot outline of Australia
+pt = patch(Outline(:, 1), Outline(:, 2), [1 1 1], 'FaceColor', [0.8 0.8 0.8]);
+% Plot reef locations by color depending on initial cots numbers
+scatter(lat, lon, 10, C_y_f_s4(:, end)-C_y_f_s0(:, end), 'filled')
+% Focus the figure on GBR and QLD
+xlim([140, 155])
+ylim([-26, -8])
+% Add labels
+set(gca, 'FontSize', ticks_FS, 'BoxStyle', 'Full');
+title(['Additional coral cover after ', num2str(t_end), ' years with 25$\%$ effort at 672 reefs'], ...
+    'Interpreter', 'Latex', 'Fontsize', title_FS)
+% Add colorbar
+c = colorbar;
+colormap(viridis)
+c.Label.String = 'Additional coral cover (\% of reef area)';
+c.Label.Interpreter = 'Latex';
+c.Label.FontSize = 14;
+
+% % Save - to avoid font resizing in colorbar
+% saveas(gcf, 'Plots/04_comparisons/coral_gbr_map_compare.png')
 
 
 %% CONTROL EFFORT =========================================================
-% % Control effort heatmaps -------------------------------------------------
-% figure(21), clf, hold on, box on
-% label_strings = {'(a) 100\% effort at 168 reefs', '(b) 50\% effort at 336 reefs', ...
-%     '(c) 25\% effort at 672 reefs', '(d) 7.72\% effort at 2175 reefs'};
-% for i = 1:size(control_plot, 2)
-%     sp = subplot(2, 2, i); hold on, box on
-%     % Plot outline of Australia
-%     pt = patch(Outline(:, 1), Outline(:, 2), [1 1 1], 'FaceColor', [0.8 0.8 0.8]);
-%     % Plot reef locations by color depending on control effort
-%     scatter(lat, lon, 10, control_plot(:, i), 'filled')
-%     colorbar off
-%     colormap parula
-%     caxis([0 1])
-%     % Focus the figure on GBR and QLD
-%     xlim([140, 155])
-%     ylim([-26, -8])
-%     % Add labels
-%     set(gca, 'FontSize', ticks_FS, 'BoxStyle', 'Full');
-%     xlabel(label_strings(i), 'Interpreter', 'Latex', 'Fontsize', axis_FS)
-% %     ylabel(h, 'Control effort, $k_{i,t}$', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
-%     title(['Control scenario ', num2str(i)], 'Interpreter', 'Latex', 'Fontsize', title_FS)
-%     % Positioning
-%     if i == 1
-%         sp.Position = [0.07 0.58 0.33 0.35];
-%     elseif i == 2
-%         sp.Position = [0.5 0.58 0.33 0.35];
-%     elseif i == 3
-%         sp.Position = [0.07 0.11 0.33 0.35];
-%     elseif i == 4
-%         sp.Position = [0.5 0.11 0.33 0.35];
-%     end
-% end
-% 
-% % Add colorbar
-% c = colorbar;
-% c.Position = [0.88 0.11 0.02 0.815];
-% c.Label.String = 'Percentage of age 2+ starfish culled, $k_{i,t}$';
-% c.Label.Interpreter = 'Latex';
-% c.Label.FontSize = 15;
-% 
+% Control effort heatmaps -------------------------------------------------
+figure(21), clf, hold on, box on
+label_strings = {'(a) 100\% effort at 168 reefs', '(b) 50\% effort at 336 reefs', ...
+    '(c) 25\% effort at 672 reefs', '(d) 7.72\% effort at 2175 reefs'};
+for i = 1:size(control_plot, 2)
+    sp = subplot(2, 2, i); hold on, box on
+    % Plot outline of Australia
+    pt = patch(Outline(:, 1), Outline(:, 2), [1 1 1], 'FaceColor', [0.8 0.8 0.8]);
+    % Plot reef locations by color depending on control effort
+    scatter(lat, lon, 10, control_plot(:, i), 'filled')
+    colorbar off
+    colormap parula
+    caxis([0 1])
+    % Focus the figure on GBR and QLD
+    xlim([140, 155])
+    ylim([-26, -8])
+    set(gca, 'YTick', -26:6:-8);
+    % Add labels
+    set(gca, 'BoxStyle', 'Full');
+    xlabel(label_strings(i), 'Interpreter', 'Latex', 'Fontsize', axis_FS-2)
+%     ylabel(h, 'Control effort, $k_{i,t}$', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
+    title(['Control scenario ', num2str(i)], 'Interpreter', 'Latex', 'Fontsize', title_FS-3)
+    % Positioning
+    if i == 1
+        sp.Position = [0.07 0.58 0.33 0.35];
+    elseif i == 2
+        sp.Position = [0.5 0.58 0.33 0.35];
+    elseif i == 3
+        sp.Position = [0.07 0.11 0.33 0.35];
+    elseif i == 4
+        sp.Position = [0.5 0.11 0.33 0.35];
+    end
+end
+
+% Add colorbar
+c = colorbar;
+c.Position = [0.88 0.11 0.02 0.815];
+c.Label.String = 'Percentage of adult starfish culled, $k_{i,t}$';
+c.Label.Interpreter = 'Latex';
+c.Label.FontSize = 14;
+
 % % Save - to avoid font resizing in colorbar
-% % saveas(gcf, 'Plots/04_comparisons/control_effort_compare.png')
+% saveas(gcf, 'Plots/04_comparisons/control_effort_compare.png')

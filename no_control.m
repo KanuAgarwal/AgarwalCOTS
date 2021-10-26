@@ -165,7 +165,7 @@ viridis=viridis();
 % Total coral cover over time ---------------------------------------------
 figure(13), clf, hold on
 plot(t_vec, coral_s0, 'Linewidth', 2, 'Color', colour_scheme(1, :))
-yline(num_reefs, 'k--', 'Linewidth', 2)
+yline(num_reefs, '--', 'Linewidth', 2, 'Color', [0.5 0.5 0.5])
 set(gca, 'FontSize', ticks_FS)
 xlabel('Time (years)', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
 ylabel('Total coral cover', 'Interpreter', 'Latex', ...
@@ -178,7 +178,7 @@ legend('Total coral cover', 'Carrying capacity', 'Interpreter', 'Latex', ...
 % Total coral cover at initiation box over time ---------------------------
 figure(14), clf, hold on
 plot(t_vec, coral_box, 'Linewidth', 2, 'Color', colour_scheme(1, :))
-yline(nnz(initial_state.N_0_2), 'k--', 'Linewidth', 2)
+yline(nnz(initial_state.N_0_2), '--', 'Linewidth', 2, 'Color', [0.5 0.5 0.5])
 set(gca, 'FontSize', ticks_FS)
 xlabel('Time (years)', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
 ylabel('Total coral cover', 'Interpreter', 'Latex', ...
