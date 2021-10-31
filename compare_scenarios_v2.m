@@ -72,8 +72,6 @@ end
 % Initialise age 1 and age 0 COTS based on Morello initial conditions
 initial_state.N_0_1 = initial_state.N_0_2 * exp(params.M_cots);
 initial_state.N_0_0 = initial_state.N_0_2 * exp(2*params.M_cots);
-% initial_state.N_0_1 = 454 * ones(num_reefs, 1);
-% initial_state.N_0_0 = 4540 * ones(num_reefs, 1);
 
 
 %% SCENARIO 0: No control, but simulation run with same conditions
@@ -102,7 +100,7 @@ starfish_age0_s0 = sum(N_y_0_s0, 1);
 %% SCENARIO 1: Control at initiation box
 
 % CONTROL EFFORT ----------------------------------------------------------
-% Cull all the starfish only in the initiation box for all 50 years
+% Cull all the starfish only in the initiation box
 control_effort_s1 = zeros(num_reefs, t_end);
 for i = 1:num_reefs
     if (lat(i) > -17 && lat(i) < -14.75) && (lon(i) > 145 && lon(i) < 147)
@@ -327,6 +325,7 @@ ticks_FS = 12;
 
 % Colours for plotting
 colour_scheme = cbrewer('div', 'RdBu', 4);
+colour_scheme_brown = cbrewer('div', 'BrBG', 9);
 colour_scheme_purple = cbrewer('div', 'PRGn', 9);
 
 % Define viridis palette colours 
@@ -388,8 +387,8 @@ legend('$x<1$\% coral cover', '$1\%\leq x<5\%$ coral cover', ...
 % GBR total coral cover ---------------------------------------------------
 figure(1), clf, hold on
 yline(num_reefs, '--', 'Linewidth', 2, 'Color', [0.5 0.5 0.5])
-plot(t_vec_s0, coral_s0, 'Linewidth', 2, 'Color', colour_scheme_purple(1, :))
-plot(t_vec_other, coral_other, 'Linewidth', 2, 'Color', 'black')
+plot(t_vec_s0, coral_s0, 'Linewidth', 2, 'Color', 'black')
+plot(t_vec_other, coral_other, '-.', 'Linewidth', 2, 'Color', colour_scheme_brown(1, :))
 plot(t_vec_s1, coral_s1, 'Linewidth', 2, 'Color', colour_scheme(1, :))
 plot(t_vec_s2, coral_s2, 'Linewidth', 2, 'Color', colour_scheme(2, :))
 plot(t_vec_s3, coral_s3, 'Linewidth', 2, 'Color', colour_scheme(3, :))
@@ -823,8 +822,8 @@ set(gca, 'XDir', 'Reverse')
 set(gca, 'FontSize', ticks_FS)
 xlabel('Latitude', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
 ylabel('No. of reefs with $\geq1\%$ coral cover increase', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
-title({'Latitudinal spread of reefs with at least 1\% coral cover increase with 25\% control effort ', ...
-    'at 672 reefs compared to no control'}, ...
+title({'Latitudinal spread of reefs with at least 1\% coral cover increase after 100 years', ...
+    'with 25\% control effort at 672 reefs compared to no control'}, ...
     'Interpreter', 'Latex', 'Fontsize', title_FS)
 
 % % Calculate density of reefs
