@@ -867,7 +867,7 @@ title({'Latitudinal spread of reefs with at least 1\% coral cover increase after
 %     % Plot outline of Australia
 %     pt = patch(Outline(:, 1), Outline(:, 2), [1 1 1], 'FaceColor', [0.8 0.8 0.8]);
 %     % Plot reef locations by color depending on control effort
-%     scatter(lat, lon, 10, control_plot(:, i), 'filled')
+%     scatter(lon, lat, 10, control_plot(:, i), 'filled')
 %     colorbar off
 %     colormap parula
 %     caxis([0 1])
@@ -878,7 +878,6 @@ title({'Latitudinal spread of reefs with at least 1\% coral cover increase after
 %     % Add labels
 %     set(gca, 'BoxStyle', 'Full');
 %     xlabel(label_strings(i), 'Interpreter', 'Latex', 'Fontsize', axis_FS-2)
-% %     ylabel(h, 'Control effort, $k_{i,t}$', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
 %     title(['Control scenario ', num2str(i)], 'Interpreter', 'Latex', 'Fontsize', title_FS-3)
 %     % Positioning
 %     if i == 1
@@ -895,9 +894,41 @@ title({'Latitudinal spread of reefs with at least 1\% coral cover increase after
 % % Add colorbar
 % c = colorbar;
 % c.Position = [0.88 0.11 0.02 0.815];
-% c.Label.String = 'Percentage of adult starfish culled, $k_{i,t}$';
+% c.Label.String = 'Percentage of adult starfish culled';
 % c.Label.Interpreter = 'Latex';
 % c.Label.FontSize = 14;
 % 
 % % % Save - to avoid font resizing in colorbar
 % % saveas(gcf, 'Plots/04_comparisons/control_effort_compare.png')
+
+figure(22), clf, hold on, box on
+label_strings = {'(a) 100\% starfish culled at 168 reefs', '(b) 50\% starfish culled at 336 reefs', ...
+    '(c) 25\% starfish culled at 672 reefs', '(d) 7.72\% starfish culled at 2175 reefs'};
+for i = 1:size(control_plot, 2)
+    sp = subplot(2, 2, i); hold on, box on
+    % Plot outline of Australia
+    pt = patch(Outline(:, 1), Outline(:, 2), [1 1 1], 'FaceColor', [0.8 0.8 0.8]);
+    % Plot reef locations by color depending on control effort
+    for j = 1:size(control_plot, 1)
+        if control_plot(j, i) > 0
+            p1 = plot(lon(j), lat(j), '.', 'MarkerSize', 12, 'Color', viridis_palette_4(2, :));
+        else
+            p2 = plot(lon(j), lat(j), '.', 'MarkerSize', 12, 'Color', viridis_palette_4(3, :));
+        end
+    end
+    % Focus the figure on GBR and QLD
+    xlim([140, 155])
+    ylim([-26, -8])
+    set(gca, 'YTick', -26:6:-8);
+    % Add labels
+    set(gca, 'BoxStyle', 'Full');
+    xlabel(label_strings(i), 'Interpreter', 'Latex', 'Fontsize', axis_FS-2)
+    title(['Strategy ', num2str(i)], 'Interpreter', 'Latex', 'Fontsize', title_FS-3)
+    % Legend for first plot only
+    if i == 1
+        [h, icons] = legend([p1 p2], 'Starfish culled', 'No starfish culled', 'Interpreter', 'Latex', 'Fontsize', title_FS-2);
+        icons = findobj(icons, 'Type', 'line');
+        icons = findobj(icons, 'Marker', 'none', '-xor');
+        set(icons, 'MarkerSize', 20)
+    end
+end
