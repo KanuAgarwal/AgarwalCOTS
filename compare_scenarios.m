@@ -49,6 +49,9 @@ params.omega_s = psurv_d02_1122_P7;             % starfish
 params.lon = lon;
 params.lat = lat;
 
+% Starfish dispersal equation - use connectivity matrices
+dispersal_eq = 1;
+
 
 % INITIAL SYSTEM STATE ----------------------------------------------------
 % CORAL
@@ -82,7 +85,7 @@ control_effort_s0 = 0;
 % SOLVE -------------------------------------------------------------------
 % Solve using function which runs simulations
 [t_vec_s0, C_y_f_s0, N_y_2_s0, N_y_1_s0, N_y_0_s0, tau_ratio_s0] = ...
-    simulate_reefs_v2(num_reefs, t_end, params, initial_state, control_effort_s0);
+    simulate_reefs_v2(num_reefs, t_end, params, initial_state, control_effort_s0, dispersal_eq);
 
 % Calculate coral cover and cots over time
 coral_s0 = sum(C_y_f_s0, 1);
@@ -131,7 +134,7 @@ budget_s1 = sum(control_effort_s1, 'all')
 % SOLVE -------------------------------------------------------------------
 % Solve using function which runs simulations
 [t_vec_s1, C_y_f_s1, N_y_2_s1, N_y_1_s1, N_y_0_s1, tau_ratio_s1] = ...
-    simulate_reefs_v2(num_reefs, t_end, params, initial_state, control_effort_s1);
+    simulate_reefs_v2(num_reefs, t_end, params, initial_state, control_effort_s1, dispersal_eq);
 
 % CALCULATIONS ------------------------------------------------------------
 % Calculate coral cover and cots over time
@@ -181,7 +184,7 @@ budget_s2 = sum(control_effort_s2, 'all')
 % SOLVE -------------------------------------------------------------------
 % Solve using function which runs simulations
 [t_vec_s2, C_y_f_s2, N_y_2_s2, N_y_1_s2, N_y_0_s2, tau_ratio_s2] = ...
-    simulate_reefs_v2(num_reefs, t_end, params, initial_state, control_effort_s2);
+    simulate_reefs_v2(num_reefs, t_end, params, initial_state, control_effort_s2, dispersal_eq);
 
 % CALCULATIONS ------------------------------------------------------------
 % Calculate coral cover and cots over time
@@ -231,7 +234,7 @@ budget_s3 = sum(control_effort_s3, 'all')
 % SOLVE -------------------------------------------------------------------
 % Solve using function which runs simulations
 [t_vec_s3, C_y_f_s3, N_y_2_s3, N_y_1_s3, N_y_0_s3, tau_ratio_s3] = ...
-    simulate_reefs_v2(num_reefs, t_end, params, initial_state, control_effort_s3);
+    simulate_reefs_v2(num_reefs, t_end, params, initial_state, control_effort_s3, dispersal_eq);
 
 % CALCULATIONS ------------------------------------------------------------
 % Calculate coral cover and cots over time
@@ -281,7 +284,7 @@ budget_s4 = sum(control_effort_s4, 'all')
 % SOLVE -------------------------------------------------------------------
 % Solve using function which runs simulations
 [t_vec_s4, C_y_f_s4, N_y_2_s4, N_y_1_s4, N_y_0_s4, tau_ratio_s4] = ...
-    simulate_reefs_v2(num_reefs, t_end, params, initial_state, control_effort_s4);
+    simulate_reefs_v2(num_reefs, t_end, params, initial_state, control_effort_s4, dispersal_eq);
 
 % CALCULATIONS ------------------------------------------------------------
 % Calculate coral cover and cots over time
@@ -328,7 +331,7 @@ budget_s5 = sum(control_effort_s5, 'all')
 % SOLVE -------------------------------------------------------------------
 % Solve using function which runs simulations
 [t_vec_s5, C_y_f_s5, N_y_2_s5, N_y_1_s5, N_y_0_s5, tau_ratio_s5] = ...
-    simulate_reefs_v2(num_reefs, t_end, params, initial_state, control_effort_s5);
+    simulate_reefs_v2(num_reefs, t_end, params, initial_state, control_effort_s5, dispersal_eq);
 
 
 % CALCULATIONS ------------------------------------------------------------
