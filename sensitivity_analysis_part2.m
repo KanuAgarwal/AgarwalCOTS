@@ -165,39 +165,46 @@ legend_FS = 12;
 ticks_FS = 12;
 colorbar_FS = 14;
 
-% Plot coral at final timestep
-figure(1), clf, hold on
-sp1 = subplot(2, 1, 1); hold on
-p1 = surf(r_s_vals, r_c_vals, coral(:, :, 100));
-set(p1, 'EdgeColor', 'none');
-shading interp
-view(2)
-c = colorbar;
-colormap(sp1, viridis)
-set(gca, 'FontSize', ticks_FS);
-xlabel('$\lambda_s$', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
-ylabel('$\lambda_c$', 'Interpreter', 'Latex', ...
-    'Fontsize', axis_FS)
-title('Total coral cover on GBR after 100 years', ...
-    'Interpreter', 'Latex', 'Fontsize', title_FS)
-c.Label.String = 'Total coral cover';
-c.Label.Interpreter = 'Latex';
-c.Label.FontSize = colorbar_FS;
+for i = 1:t_end+1
+    % Plot coral at final timestep
+    figure(10), clf, hold on
+    sp1 = subplot(2, 1, 1); hold on
+    p1 = surf(r_s_vals, r_c_vals, coral(:, :, i));
+    set(p1, 'EdgeColor', 'none');
+    shading interp
+    view(2)
+    c = colorbar;
+    colormap(sp1, viridis)
+    set(gca, 'FontSize', ticks_FS);
+    xlabel('$\lambda_s$', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
+    ylabel('$\lambda_c$', 'Interpreter', 'Latex', ...
+        'Fontsize', axis_FS)
+    title(['Total coral cover on GBR after ', num2str(i-1), ' years'], ...
+        'Interpreter', 'Latex', 'Fontsize', title_FS)
+    c.Label.String = 'Total coral cover';
+    c.Label.Interpreter = 'Latex';
+    c.Label.FontSize = colorbar_FS;
+%     caxis([0 2750])
 
-% Plot starfish at final timestep
-sp2 = subplot(2, 1, 2); hold on
-p2 = surf(r_s_vals(16:31), r_c_vals, starfish_age2(:, 16:31, 100));
-set(p2, 'EdgeColor', 'none');
-shading interp
-view(2)
-c = colorbar;
-colormap(sp2, magma)
-set(gca, 'FontSize', ticks_FS);
-xlabel('$\lambda_s$', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
-ylabel('$\lambda_c$', 'Interpreter', 'Latex', ...
-    'Fontsize', axis_FS)
-title('Total age 2+ starfish on GBR after 100 years', ...
-    'Interpreter', 'Latex', 'Fontsize', title_FS)
-c.Label.String = 'No. of age 2+ starfish';
-c.Label.Interpreter = 'Latex';
-c.Label.FontSize = colorbar_FS;
+    % Plot starfish at final timestep
+    sp2 = subplot(2, 1, 2); hold on
+    p2 = surf(r_s_vals(16:31), r_c_vals, starfish_age2(:, 16:31, i));
+%     p2 = surf(r_s_vals, r_c_vals, starfish_age2(:, :, i));
+    set(p2, 'EdgeColor', 'none');
+    shading interp
+    view(2)
+    c = colorbar;
+    colormap(sp2, magma)
+    set(gca, 'FontSize', ticks_FS);
+    xlabel('$\lambda_s$', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
+    ylabel('$\lambda_c$', 'Interpreter', 'Latex', ...
+        'Fontsize', axis_FS)
+    title(['Total age 2+ starfish on GBR after ', num2str(i-1), ' years'], ...
+        'Interpreter', 'Latex', 'Fontsize', title_FS)
+    c.Label.String = 'No. of age 2+ starfish';
+    c.Label.Interpreter = 'Latex';
+    c.Label.FontSize = colorbar_FS;
+%     caxis([0 12e5])
+end 
+
+saveas(gcf, 'Plots/05_sensitivity_analysis/lambda_parameters.png')
