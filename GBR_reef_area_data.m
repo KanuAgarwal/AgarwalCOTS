@@ -11,7 +11,7 @@ clear all
 % LOAD DATA ---------------------------------------------------------------
 % =========================================================================
 % Load Australian coast data 
-load AustOutline            % Australian border coordinates
+% load AustOutline            % Australian border coordinates
 
 % =========================================================================
 % Load reef coordinates 
@@ -40,8 +40,8 @@ M = readmatrix('DataSources/ReefGazette.csv', opts);
 % Replace all entries that have NaN with 0
 M(isnan(M)) = 0;
 
-% Remove rows that have all zeros
-reef_area_data = M(any(M, 2), :);
+% Remove rows that have any zeros i.e. no area data 
+reef_area_data = M(all(M, 2), :);
 
 % =========================================================================
 % Get connectivity matrices 
@@ -175,10 +175,12 @@ for i = 1:length(I_v2_area_repeats_unique)
         % Make sure the second closest reef isn't already used
         if ~any(I_v2_area_actual == I_area_current(2, ind_max))
             I_v2_area_actual(I_coord_current(ind_max)) = I_area_current(2, ind_max);
+        % Make sure the third closest reef isn't already used
         elseif ~any(I_v2_area_actual == I_area_current(3, ind_max))
             I_v2_area_actual(I_coord_current(ind_max)) = I_area_current(3, ind_max);
+        % Otherwise place a zero and delete the entry later
         else 
-            fprintf('help all reefs used')
+            I_v2_area_actual(I_coord_current(ind_max)) = 0;
         end
     % If there are two other reefs with the same 
     elseif size(D_current, 2) == 3
@@ -206,8 +208,18 @@ for i = 1:length(I_v2_area_repeats_unique)
     end
 end
 
+% Delete any entries from indexes that are zero - these are repeat reefs
+index_delete = find(I_v2_area_actual == 0); 
+I_v2_area_actual(index_delete) = [];
+
+% Delete the corresponding data from everything else i.e. connectivity 
+% matrix, lat/long data
+reef_coord_data_v2(index_delete, :) = []; 
+omega(index_delete, :) = [];
+omega(:, index_delete) = [];
+
 % =========================================================================
-% Check all matching reefs are unique
+% Check all matching reefs are unique 
 num_reefs_actual = length(reef_coord_data_v2)
 unique_reefs = length(unique(I_v2_area_actual))
 
@@ -225,8 +237,8 @@ legend('Kanu model reefs', 'Reef sizes from csv file')
 % =========================================================================
 % Variables to return
 num_reefs = num_reefs_actual;
-lat = reef_coord_data_v2(:, 1);
-lon = reef_coord_data_v2(:, 2);
+lon = reef_coord_data_v2(:, 1);
+lat = reef_coord_data_v2(:, 2);
 reef_area = reef_area_data_actual(:, 3);
 omega = omega;
 
