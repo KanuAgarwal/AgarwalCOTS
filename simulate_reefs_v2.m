@@ -133,7 +133,9 @@ for t = t_0+1:t_end
         elseif dispersal_eq == 1
             % Calculate starfish larval recruitment
             for j = 1:num_reefs
-                tau(i, t) = tau(i, t) + omega_s(j, i) * N_y_2(j, t) * r_s;
+%                 tau(i, t) = tau(i, t) + omega_s(j, i) * N_y_2(j, t) * r_s;
+                tau(i, t) = tau(i, t) + omega_s(j, i) * r_s ...
+                    * (N_y_2(j, t) + 0.1 * N_y_1(j, t));
             end
 
             % Calculate starfish larval recruitment ratio for initiation box
