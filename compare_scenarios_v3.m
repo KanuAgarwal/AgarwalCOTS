@@ -47,8 +47,9 @@ params.r_c = 0.1;               % coral larvae reproduction rate
 params.r_s = 5000;              % starfish larvae reproduction rate
 
 % Connectivity matrices from Bode et al. (2012)
-params.omega_c = omega;         % coral larval dispersal
+V_f = 0.3;                      % starfish larval survival rate
 V_s = 0.3;                      % starfish larval survival rate
+params.omega_c = V_f*omega;     % coral larval dispersal
 params.omega_s = V_s*omega;     % starfish larval dispersal
 
 % Latitude and longitude for starfish larval calculation
@@ -355,7 +356,7 @@ control_3_plot = control_effort_s3(:, 1);
 control_4_plot = control_effort_s4(:, 1);
 
 % Combine into matrix
-control_plot = 100 * [control_1_plot control_2_plot control_3_plot control_4_plot];
+control_plot = [control_1_plot control_2_plot control_3_plot control_4_plot];
 
 
 
@@ -991,7 +992,7 @@ b(4).FaceColor = viridis_palette_5(4, :);
 b(5).FaceColor = viridis_palette_5(5, :);
 set(gca, 'FontSize', ticks_FS+1);
 set(gca, 'TickLabelInterpreter', 'Latex')
-ylim([-10 16])
+% ylim([-10 16])
 title('\qquad\qquad\qquad Number of additional reefs with $x\%$ coral cover compared to no control after 100 years', ...
     'Interpreter', 'Latex', 'Fontsize', title_FS);
 xlabel('Control scenario', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
@@ -1039,37 +1040,65 @@ legend('$x\leq 10$\% coral cover', '$10\%< x\leq30\%$ coral cover', ...
 %% CORAL COVER INCREASE ===================================================
 
 % Comparing percentage of coral cover -------------------------------------
-% Calculate difference in coral cover percentage from best to worst scenario
-coral_final_s1_percent = C_y_f_s1(:, end) ./ reef_area;
+% Calculate difference in coral cover percentage to no control 
 coral_final_s0_percent = C_y_f_s0(:, end) ./ reef_area;
-coral_best_compare = (coral_final_s1_percent - coral_final_s0_percent) * 100;
+coral_final_s1_percent = C_y_f_s1(:, end) ./ reef_area;
+coral_final_s2_percent = C_y_f_s2(:, end) ./ reef_area;
+coral_final_s3_percent = C_y_f_s3(:, end) ./ reef_area;
+coral_final_s4_percent = C_y_f_s4(:, end) ./ reef_area;
+coral_s1_compare = (coral_final_s1_percent - coral_final_s0_percent) * 100;
+coral_s2_compare = (coral_final_s2_percent - coral_final_s0_percent) * 100;
+coral_s3_compare = (coral_final_s3_percent - coral_final_s0_percent) * 100;
+coral_s4_compare = (coral_final_s4_percent - coral_final_s0_percent) * 100;
 
 % Sort percentage increase by latitude of reefs 
 [lat_sorted, sort_index] = sort(lat);
-coral_best_compare_sorted = coral_best_compare(sort_index);
+coral_s1_compare_sorted = coral_s1_compare(sort_index);
+coral_s2_compare_sorted = coral_s2_compare(sort_index);
+coral_s3_compare_sorted = coral_s3_compare(sort_index);
+coral_s4_compare_sorted = coral_s4_compare(sort_index);
 
 % Initialise indexes for new arrays
-index_1 = 1;
-index_5 = 1;
+index_s1 = 1;
+index_s2 = 1;
+index_s3 = 1;
+index_s4 = 1;
 
-% Select data with reefs that have at least 1% and 5% coral cover increase
+% Select data with reefs that have at least 1% coral cover increase
 for i = 1:num_reefs
-    % Reefs that have 1% or more coral cover increase
-    if coral_best_compare_sorted(i) >= 1
-        coral_best_compare_more_1(index_1) = coral_best_compare_sorted(i);
-        lat_more_1_percent(index_1) = lat_sorted(i);
-        index_1 = index_1 + 1;
+    % Compare scenario 1
+    if coral_s1_compare_sorted(i) >= 1
+        coral_s1_compare_1_percent(index_s1) = coral_s1_compare_sorted(i);
+        lat_s1_1_percent(index_s1) = lat_sorted(i);
+        index_s1 = index_s1 + 1;
     end
-    % Reefs that have 5% or more coral cover increase
-    if coral_best_compare_sorted(i) >= 5
-        coral_best_compare_more_5(index_5) = coral_best_compare_sorted(i);
-        lat_more_5_percent(index_5) = lat_sorted(i);
-        index_5 = index_5 + 1;
+    % Compare scenario 2
+    if coral_s2_compare_sorted(i) >= 1
+        coral_s2_compare_1_percent(index_s2) = coral_s2_compare_sorted(i);
+        lat_s2_1_percent(index_s2) = lat_sorted(i);
+        index_s2 = index_s2 + 1;
+    end
+    % Compare scenario 3
+    if coral_s3_compare_sorted(i) >= 1
+        coral_s3_compare_1_percent(index_s3) = coral_s3_compare_sorted(i);
+        lat_s3_1_percent(index_s3) = lat_sorted(i);
+        index_s3 = index_s3 + 1;
+    end
+    % Compare scenario 4
+    if coral_s4_compare_sorted(i) >= 1
+        coral_s4_compare_1_percent(index_s4) = coral_s4_compare_sorted(i);
+        lat_s4_1_percent(index_s4) = lat_sorted(i);
+        index_s4 = index_s4 + 1;
     end
 end
 
+% Number of reefs with increase 1% increase
+index_s1
+index_s2
+index_s3
+index_s4
 
-% Plot of coral cover increase -----------------------------------------
+% Plot of coral cover increase --------------------------------------------
 figure(32), clf
 
 % Coral cover on GBR (colormap) -------------------------------------------
@@ -1077,7 +1106,7 @@ sp1 = subplot(1, 2, 1); hold on, box on
 % Plot outline of Australia
 pt = patch(Outline(:, 1), Outline(:, 2), [1 1 1], 'FaceColor', [0.8 0.8 0.8]);
 % Plot reef locations by color depending on initial cots numbers
-scatter(lon, lat, 12, coral_best_compare, 'filled')
+scatter(lon, lat, 12, coral_s1_compare, 'filled')
 % Focus the figure on GBR and QLD
 xlim([140, 155])
 ylim([-25, -10])
@@ -1098,78 +1127,144 @@ c.Label.String = 'Coral cover increase (\% of reef area)';
 c.Label.Interpreter = 'Latex';
 c.Label.FontSize = 14;
 
-% % Histogram of reefs with at least 1% increase ----------------------------
-% sp2 = subplot(1, 2, 2); hold on
-% % Plot histogram first and get info
-% h1 = histogram(lat_more_1_percent, 40, 'Orientation', 'horizontal');
-% h2 = histogram(lat_more_5_percent, 40, 'Orientation', 'horizontal');
-% h1.BinWidth = 0.35;
-% h2.BinWidth = 0.35;
-% 
-% % % Get the values to then make a scatter plot with
-% % % x axis values - number of reefs
-% % one_percent_reefs = h1.Values;
-% % five_percent_reefs = h2.Values;
-% % % y axis values
-% % lat_values_one = h1.BinEdges + (h1.BinWidth/2);
-% % lat_values_one = lat_values_one(2:end);
-% % lat_values_five = h2.BinEdges + (h2.BinWidth/2);
-% % lat_values_five = lat_values_five(2:end);
-% % % Create arrays and delete rows with zeros
-% % one_percent = [one_percent_reefs; lat_values_one]';
-% % one_percent = one_percent(all(one_percent, 2), :);
-% % five_percent = [five_percent_reefs; lat_values_five]';
-% % five_percent = five_percent(all(five_percent, 2), :);
-% % % Clear this subplot
-% % cla(sp2)
-% % 
-% % % Now make the scatter plot
-% % SS = 60;
-% % scatter(one_percent(:, 1), one_percent(:, 2), SS, viridis_palette_4(2, :),'Filled')
-% % s = scatter(five_percent(:, 1), five_percent(:, 2), 'x');
-% % s.MarkerFaceColor = viridis_palette_4(4, :);
-% % s.MarkerEdgeColor = viridis_palette_4(4, :);
-% % s.SizeData = SS;
-% % s.LineWidth = 2;
-% 
-% % Set the axis, labels etc. 
-% set(gca, 'FontSize', ticks_FS)
-% % sp2.Position = [0.6 0.08 0.35 0.84];
-% sp2.Position = [0.6 0.08 0.35 0.84];
-% ylim([-26, -8])
-% % xlim([0 60])
-% xlabel('No. of reefs with $x$\% coral cover increase', ...
-%     'Interpreter', 'Latex', 'Fontsize', axis_FS)
-% ylabel('Latitude', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
-% title({'Latitudinal spread of reefs with $x$\% coral cover', ...
-%     ['increase after ', num2str(t_end), ' years']}, ...
-%     'Interpreter', 'Latex', 'Fontsize', title_FS)
-% legend('$x\geq$1\% increase', '$x\geq$5\% increase', ...
-%     'Interpreter', 'Latex', 'Fontsize', legend_FS, 'Location', 'SouthEast');
-
-
-% Histogram of reefs with at least 1% increase ----------------------------
+% Histogram for all four scenarios ----------------------------------------
 sp2 = subplot(1, 2, 2); hold on
-h1 = histogram(lat_more_1_percent, 40, 'Orientation', 'horizontal');
-h1.BinWidth = 0.35;
+
+% Plot histogram first and get info
+h1 = histogram(lat_s1_1_percent, 40, 'Orientation', 'horizontal');
+h2 = histogram(lat_s2_1_percent, 40, 'Orientation', 'horizontal');
+h3 = histogram(lat_s3_1_percent, 40, 'Orientation', 'horizontal');
+h4 = histogram(lat_s4_1_percent, 40, 'Orientation', 'horizontal');
+h1.BinWidth = 0.5;
+h2.BinWidth = 0.5;
+h3.BinWidth = 0.5;
+h4.BinWidth = 0.5;
+
+% Get the values to then make a scatter plot with
+% x axis values - number of reefs
+s1_reefs = h1.Values;
+s2_reefs = h2.Values;
+s3_reefs = h3.Values;
+s4_reefs = h4.Values;
+
+% y axis values
+lat_values_s1 = h1.BinEdges + (h1.BinWidth/2);
+lat_values_s1 = lat_values_s1(2:end);
+lat_values_s2 = h2.BinEdges + (h2.BinWidth/2);
+lat_values_s2 = lat_values_s2(2:end);
+lat_values_s3 = h3.BinEdges + (h3.BinWidth/2);
+lat_values_s3 = lat_values_s3(2:end);
+lat_values_s4 = h4.BinEdges + (h4.BinWidth/2);
+lat_values_s4 = lat_values_s4(2:end);
+
+% Create arrays and delete rows with zeros
+s1_reefs_plot = [s1_reefs; lat_values_s1]';
+s1_reefs_plot = s1_reefs_plot(all(s1_reefs_plot, 2), :);
+s2_reefs_plot = [s2_reefs; lat_values_s2]';
+s2_reefs_plot = s2_reefs_plot(all(s2_reefs_plot, 2), :);
+s3_reefs_plot = [s3_reefs; lat_values_s3]';
+s3_reefs_plot = s3_reefs_plot(all(s3_reefs_plot, 2), :);
+s4_reefs_plot = [s4_reefs; lat_values_s4]';
+s4_reefs_plot = s4_reefs_plot(all(s4_reefs_plot, 2), :);
+
+% Clear this subplot
+cla(sp2)
+
+% Now make the scatter plot
+s1 = scatter(s1_reefs_plot(:, 1), s1_reefs_plot(:, 2), 'o');
+s1.MarkerFaceColor = colour_scheme(1, :);
+s1.MarkerEdgeColor = colour_scheme(1, :);
+s1.SizeData = 70;
+s1.LineWidth = 2;
+
+s2 = scatter(s2_reefs_plot(:, 1), s2_reefs_plot(:, 2), 'x');
+s2.MarkerFaceColor = colour_scheme(2, :);
+s2.MarkerEdgeColor = colour_scheme(2, :);
+s2.SizeData = 90;
+s2.LineWidth = 2;
+
+s3 = scatter(s3_reefs_plot(:, 1), s3_reefs_plot(:, 2), '+');
+s3.MarkerFaceColor = colour_scheme(3, :);
+s3.MarkerEdgeColor = colour_scheme(3, :);
+s3.SizeData = 90;
+s3.LineWidth = 2;
+
+s4 = scatter(s4_reefs_plot(:, 1), s4_reefs_plot(:, 2), 'o');
+s4.MarkerFaceColor = colour_scheme(4, :);
+s4.MarkerEdgeColor = colour_scheme(4, :);
+s4.SizeData = 70;
+s4.LineWidth = 2;
+
+% Set the axis, labels etc. 
 set(gca, 'FontSize', ticks_FS)
 sp2.Position = [0.6 0.08 0.35 0.84];
-xlim([0 35])
 ylim([-25, -10])
-xlabel('No. of reefs with $\geq1\%$ coral cover increase', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
+% xlim([0 60])
+xlabel('No. of reefs with $\geq 1\%$ coral cover increase', ...
+    'Interpreter', 'Latex', 'Fontsize', axis_FS)
 ylabel('Latitude', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
-title({'Latitudinal spread of reefs with at least 1\% ', ...
+title({'Latitudinal spread of reefs with at least 1\%', ...
     ['coral cover increase after ', num2str(t_end), ' years']}, ...
     'Interpreter', 'Latex', 'Fontsize', title_FS)
+legend('100\% effort over 1737.1 $km^2$', '50\% effort over 3474.2 $km^2$', ...
+    '25\% effort over 6948.4 $km^2$', '12.2\% effort over 14240 $km^2$', ...
+    'Interpreter', 'Latex', 'Fontsize', legend_FS, 'Location', 'SouthEast');
 
 % % Save - to avoid font resizing in colorbar
 % saveas(gcf, 'Plots/04_comparisons/best_coral_cover_increase.png')
 
 
+% Plot of coral cover increase (best scenario only) -----------------------
+figure(33), clf
+
+% Coral cover on GBR (colormap) -------------------------------------------
+sp3 = subplot(1, 2, 1); hold on, box on
+% Plot outline of Australia
+pt = patch(Outline(:, 1), Outline(:, 2), [1 1 1], 'FaceColor', [0.8 0.8 0.8]);
+% Plot reef locations by color depending on initial cots numbers
+scatter(lon, lat, 12, coral_s1_compare, 'filled')
+% Focus the figure on GBR and QLD
+xlim([140, 155])
+ylim([-25, -10])
+sp3.Position = [0.07 0.08 0.43 0.84];
+% Add labels
+set(gca, 'FontSize', ticks_FS, 'BoxStyle', 'Full');
+xlabel('Longitude', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
+ylabel('Latitude', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
+title({['Coral cover increase after ', num2str(t_end), ' years with 100\% effort'], ...
+    'over 1737.1 $km^2$ compared to no control'}, ...
+    'Interpreter', 'Latex', 'Fontsize', title_FS)
+% Add colorbar
+c = colorbar;
+cmap = colormap(viridis);
+cmap = flipud(cmap);
+colormap(cmap)
+c.Label.String = 'Coral cover increase (\% of reef area)';
+c.Label.Interpreter = 'Latex';
+c.Label.FontSize = 14;
+
+% Histogram for best scenario only ----------------------------------------
+sp4 = subplot(1, 2, 2); hold on
+h5 = histogram(lat_s1_1_percent, 40, 'Orientation', 'horizontal');
+h5.BinWidth = 0.35;
+set(gca, 'FontSize', ticks_FS)
+sp4.Position = [0.6 0.08 0.35 0.84];
+% xlim([0 35])
+ylim([-25, -10])
+xlabel('No. of reefs with $\geq 1\%$ coral cover increase', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
+ylabel('Latitude', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
+title({'Latitudinal spread of reefs with at least 1\%', ...
+    ['coral cover increase after ', num2str(t_end), ' years']}, ...
+    'Interpreter', 'Latex', 'Fontsize', title_FS)
+
+
+% % Save - to avoid font resizing in colorbar
+% saveas(gcf, 'Plots/04_comparisons/best_coral_cover_increase.png')
+
 
 %% CONTROL EFFORT =========================================================
 % Control effort heatmaps -------------------------------------------------
-figure(33), clf, hold on, box on
+figure(34), clf, hold on, box on
 label_strings = {'(a) 100\% effort over 1737.1 $km^2$', '(b) 50\% effort over 3474.2 $km^2$', ...
     '(c) 25\% effort over 6948.4 $km^2$', '(d) 12.2\% effort over 14240 $km^2$'};
 for i = 1:size(control_plot, 2)
@@ -1180,7 +1275,7 @@ for i = 1:size(control_plot, 2)
     scatter(lon, lat, 10, control_plot(:, i), 'filled')
     colorbar off
     colormap parula
-    caxis([0 100])
+    caxis([0 1])
     % Focus the figure on GBR and QLD
     xlim([140, 155])
     ylim([-25, -10])
@@ -1204,15 +1299,15 @@ end
 % Add colorbar
 c = colorbar;
 c.Position = [0.88 0.11 0.02 0.815];
-c.Label.String = 'Percentage of adult starfish culled at each reef';
+c.Label.String = 'Percentage of adult starfish culled ($k_{i,t}$)';
 c.Label.Interpreter = 'Latex';
 c.Label.FontSize = 14;
 
 % % Save - to avoid font resizing in colorbar
-% saveas(gcf, 'Plots/04_comparisons/control_effort_compare.png')
+% saveas(gcf, 'Plots/Manuscript/control_effort_compare.png')
 
 % % Control effort heatmaps (simple) ----------------------------------------
-% figure(33), clf, hold on, box on
+% figure(34), clf, hold on, box on
 % label_strings = {'(a) 100\% starfish culled at 168 reefs', '(b) 50\% starfish culled at 336 reefs', ...
 %     '(c) 25\% starfish culled at 672 reefs', '(d) 7.72\% starfish culled at 2175 reefs'};
 % for i = 1:size(control_plot, 2)
