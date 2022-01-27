@@ -1,5 +1,5 @@
 function [t_vec, C_y_f, N_y_2, N_y_1, N_y_0, tau_ratio] ...
-    = simulate_reefs_v2(num_reefs, t_end, params, initial_state, control_effort, dispersal_eq)
+    = simulate_reefs_v3(num_reefs, t_end, params, initial_state, control_effort, dispersal_eq)
 
 % This function simulates starfish and coral populations at n reefs for t 
 % years. 
@@ -49,7 +49,6 @@ r_c = params.r_c;               % coral larvae production rate
 r_s = params.r_s;               % starfish larvae production rate
 omega_c = params.omega_c;       % coral larvae connectivity matrix
 omega_s = params.omega_s;       % starfish larvae connectivity matrix
-% A = params.A;                   % reef area i.e. coral carrying capacity
 lon = params.lon;               % longitude coordinates of each reef
 lat = params.lat;               % latitude coordinates of each reef
 
@@ -133,7 +132,9 @@ for t = t_0+1:t_end
         elseif dispersal_eq == 1
             % Calculate starfish larval recruitment
             for j = 1:num_reefs
+%                 % Only age 2+ starrfish reproduce
 %                 tau(i, t) = tau(i, t) + omega_s(j, i) * N_y_2(j, t) * r_s;
+                % Allow some proportion of age 1 starfish to reproduce
                 tau(i, t) = tau(i, t) + omega_s(j, i) * r_s ...
                     * (N_y_2(j, t) + 0.1 * N_y_1(j, t));
             end
@@ -171,8 +172,6 @@ for t = t_0+1:t_end
 
         % Calculate population sizes for age 1 and 2+ COTS
         N_y_1(i, t+1) = N_y_0(i, t) * exp(-f_of_C(i, t) * M_cots);
-%         N_y_2(i, t+1) = (N_y_1(i, t) + N_y_2(i, t)) * exp(-f_of_C(i, t) * M_cots) ...
-%                             - k(i, t) * N_y_2(i, t);
         N_y_2(i, t+1) = N_y_1(i, t) * exp(-f_of_C(i, t) * M_cots) ...
                             + (1 - k(i, t)) * N_y_2(i, t) * exp(-f_of_C(i, t) * M_cots);
         
@@ -191,7 +190,6 @@ for t = t_0+1:t_end
                         
         % Function for calculating different coral population sizes
         rho_y(i, t) = exp(-5 * C_y_f(i, t) / K_f(i));
-%         rho_y = 1 / (1 + exp(-70 * (C_y_f(i, t) / (K_f(i) - 0.1))));
         
         % Fast-growing coral mortality from COTS 
         Q_y_f(i, t) = (1-rho_y(i, t)) * (p_1_f(i) * (N_y_1(i, t) + N_y_2(i, t)) * C_y_f(i, t)) ...
@@ -214,6 +212,10 @@ for t = t_0+1:t_end
             C_y_f(i, t+1) = 0;          % fast-growing coral
         end
         
+%         if C_y_m(i, t+1) < 0
+%             C_y_m(i, t+1) = 0;          % slow-growing coral
+%         end
+
     end
     % END =================================================================
     
