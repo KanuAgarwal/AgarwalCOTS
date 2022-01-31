@@ -7,7 +7,7 @@ clear all
 load IdentifyKeySources/ConnectivityMatrices_Model_A_2002_P7
 
 % Load in Australian map outline
-load AustOutline
+load DataSources/AustOutline
 
 % Load in latitude longitude data
 load IdentifyKeySources/original_centroids
