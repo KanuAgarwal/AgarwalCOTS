@@ -1,7 +1,7 @@
 # Maths Honours Code
 
 ## Repository Structure
-All .m files within the main repository are the main MATLAB code files. The following is a list of all folders within the repository
+All .m files within the main repository are the main [MATLAB code files](https://github.com/KanuAgarwal/MathsHonoursCode#matlab-code-files). The following is a list of all folders within the repository
 
 - **ArchivedCode:** Folder with old MATLAB code files using old versions of models.
 - **cbrewer:** [MATLAB colorbrewer schemes](https://au.mathworks.com/matlabcentral/fileexchange/34087-cbrewer-colorbrewer-schemes-for-matlab) - categorical colour schemes.
@@ -19,16 +19,16 @@ All .m files within the main repository are the main MATLAB code files. The foll
 
 ### Functions
 #### match_reefs_to_areas.m
-This function takes the intersection of reefs from the connectivity matrices in `IdentifyKeySources` to the reefs with areas in `DataSources/ReefGazette.csv`, and returns information about the new reef dataset: the number of reefs, the longitude and latitude coordinates, the reef area, and the connectivity matrix. This function is called in both scripts at the beginning to setup the reef structure.
+This function takes the intersection of reefs from the connectivity matrices in `IdentifyKeySources` to the reefs with areas in `DataSources/ReefGazette.csv`, and returns information about the new reef dataset: the number of reefs, the longitude and latitude coordinates, the reef area, and the connectivity matrix. This function is called in both [scripts](https://github.com/KanuAgarwal/MathsHonoursCode#scripts) at the beginning to setup the reef structure.
 
 #### calculate_cots_age_1_reproduction.m
-This function calculates and returns the proportion of age 1 COTS that can reproduce, or the parameter mu_s in the model, using equations from two papers: [Lucas (1984)](https://www.sciencedirect.com/science/article/abs/pii/0022098184902144) and [Babcock et al. (2016)](https://link.springer.com/article/10.1007/s00227-016-3009-5). This function is called in both scripts to calculate this parameter.
+This function calculates and returns the proportion of age 1 COTS that can reproduce, or the parameter mu_s in the model, using equations from two papers: [Lucas (1984)](https://www.sciencedirect.com/science/article/abs/pii/0022098184902144) and [Babcock et al. (2016)](https://link.springer.com/article/10.1007/s00227-016-3009-5). This function is called in both [scripts](https://github.com/KanuAgarwal/MathsHonoursCode#scripts) to calculate this parameter.
 
 #### simulate_reefs_v3.m
-This function runs a simulation of the GBR model given all of the required parameters, initial conditions, etc. and returns the coral and starfish populations over time. See file for more information on function inputs and outputs. 
+This function runs a simulation of the GBR model given all of the required parameters, initial conditions, etc. and returns the coral and starfish populations over time. See [file](https://github.com/KanuAgarwal/MathsHonoursCode/blob/main/simulate_reefs_v3.m) for more information on function inputs and outputs. 
 
 #### calculate_population_box.m
-This function calculates the population size of coral, and age-structured COTS within the outbreak initiation box over time, given the coral and age-structured COTS population size on the whole GBR over time. This function is called in both scripts after each simulation.
+This function calculates the population size of coral, and age-structured COTS within the outbreak initiation box over time, given the coral and age-structured COTS population size on the whole GBR over time. This function is called in both [scripts](https://github.com/KanuAgarwal/MathsHonoursCode#scripts) after each simulation.
 
 ### Scripts
 
