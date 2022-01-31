@@ -19,9 +19,9 @@ load IdentifyKeySources/original_centroids
 % Convert reef area from hectares to sqkm
 reef_area = reef_area / 100;
 
-% Clear the rest of the connectivity matrices that we don't need
+% Clear the rest of the connectivity matrices and data that we don't need
 clear psurv*
-
+clear rlg rlt
 
 % PARAMETERS --------------------------------------------------------------
 % How long do we want to run the simulation for
@@ -46,9 +46,14 @@ params.p_2_f = ...
 params.r_c = 0.1;               % coral larvae reproduction rate
 params.r_s = 5000;              % starfish larvae reproduction rate
 
+% Call function to calculate percentage of age 1 COTS that reproduce, 
+% calculated from Lucas (1984) and Babcock et al. (2016)
+params.mu_s = calculate_cots_age1_reproduction();     
+
 % Connectivity matrices from Bode et al. (2012)
-params.omega_c = omega;         % coral larval dispersal
-V_s = 0.3;                      % starfish larval survival rate
+V_f = 0.9;                      % coral larval survival rate
+V_s = 0.25;                      % starfish larval survival rate
+params.omega_c = V_f*omega;     % coral larval dispersal
 params.omega_s = V_s*omega;     % starfish larval dispersal
 
 % Latitude and longitude for starfish larval calculation
@@ -75,6 +80,18 @@ for i = 1:num_reefs
         coral_box_cc = coral_box_cc + reef_area(i);
     end
 end
+
+
+% EXPORT DATA -------------------------------------------------------------
+% Export reef coords, area and reef dependent parameters to csv
+array_to_write = [lon, lat, reef_area, params.p_1_f, params.p_2_f];
+table_to_write = array2table(array_to_write);
+table_to_write.Properties.VariableNames(1:5) = {'Longitude', 'Latitude', ...
+    'Reef Area or K_(f,i) (sqkm)', 'alpha_(sf,i)', 'beta_(sf,i)'};
+writetable(table_to_write, 'DataSources/SupportingInformation_ReefData.csv');
+
+% Export connectivity matrix to csv
+writematrix(omega, 'DataSources/SupportingInformation_ConnectivityMatrix.csv');
 
 
 %% CONTROL SCENARIOS
@@ -693,8 +710,8 @@ scatter(initial_starfish_vals, scenario_2_coral, 100, colour_scheme(2, :), 'fill
 scatter(initial_starfish_vals, scenario_3_coral, 100, colour_scheme(3, :), 'filled')
 scatter(initial_starfish_vals, scenario_4_coral, 100, colour_scheme(4, :), 'filled')
 set(gca, 'FontSize', ticks_FS);
-ylim([3500 4000])
-set(gca, 'YTick', 3500:100:4000);
+ylim([3300 3600])
+set(gca, 'YTick', 3300:100:3600);
 xlabel('Initial no. of adult starfish', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
 ylabel('Total coral cover ($km^2$)', 'Interpreter', 'Latex', ...
     'Fontsize', axis_FS)

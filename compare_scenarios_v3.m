@@ -46,9 +46,13 @@ params.p_2_f = ...
 params.r_c = 0.1;               % coral larvae reproduction rate
 params.r_s = 5000;              % starfish larvae reproduction rate
 
+% Call function to calculate percentage of age 1 COTS that reproduce, 
+% calculated from Lucas (1984) and Babcock et al. (2016)
+params.mu_s = calculate_cots_age1_reproduction();     
+
 % Connectivity matrices from Bode et al. (2012)
-V_f = 0.3;                      % starfish larval survival rate
-V_s = 0.3;                      % starfish larval survival rate
+V_f = 0.9;                      % coral larval survival rate
+V_s = 0.25;                      % starfish larval survival rate
 params.omega_c = V_f*omega;     % coral larval dispersal
 params.omega_s = V_s*omega;     % starfish larval dispersal
 
@@ -453,7 +457,7 @@ set(gca, 'FontSize', ticks_FS);
 xlabel('Time (years)', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
 ylabel('Total coral cover increase ($km^2$)', 'Interpreter', 'Latex', ...
     'Fontsize', axis_FS)
-title('Total coral cover increase at initiation box compared to no control', ...
+title('\qquad\qquad Total coral cover increase at initiation box compared to no control', ...
     'Interpreter', 'Latex', 'Fontsize', title_FS)
 legend('100\% effort over 1737.1 $km^2$', '50\% effort over 3474.2 $km^2$', ...
     '25\% effort over 6948.4 $km^2$', '12.2\% effort over 14240 $km^2$',  ...
@@ -507,7 +511,7 @@ set(gca, 'FontSize', ticks_FS)
 xlabel('Time (years)', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
 ylabel('Total adult starfish decrease', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
 title('\qquad\qquad\qquad\qquad\qquad\qquad Total decrease in adult starfish population on GBR compared to no control', ...
-    'Interpreter', 'Latex', 'Fontsize', title_FS-1)
+    'Interpreter', 'Latex', 'Fontsize', title_FS)
 legend('100\% effort over 1737.1 $km^2$', '50\% effort over 3474.2 $km^2$', ...
     '25\% effort over 6948.4 $km^2$', '12.2\% effort over 14240 $km^2$',  ...
     'Location', 'NorthEastOutside', 'Interpreter', 'Latex', 'Fontsize', legend_FS)
@@ -573,7 +577,7 @@ set(gca, 'FontSize', ticks_FS)
 xlabel('Time (years)', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
 ylabel('Total adult starfish decrease', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
 title('\quad\qquad\qquad\qquad\qquad\qquad Total decrease in adult starfish population at initiation box compared to no control', ...
-    'Interpreter', 'Latex', 'Fontsize', title_FS-1)
+    'Interpreter', 'Latex', 'Fontsize', title_FS)
 legend('100\% effort over 1737.1 $km^2$', '50\% effort over 3474.2 $km^2$', ...
     '25\% effort over 6948.4 $km^2$', '12.2\% effort over 14240 $km^2$',  ...
     'Location', 'NorthEastOutside', 'Interpreter', 'Latex', 'Fontsize', legend_FS)
@@ -919,6 +923,9 @@ title({'Latitudinal spread of reefs with at least 500 ', ...
     ['adult starfish after ', num2str(t_end), ' years']}, ...
     'Interpreter', 'Latex', 'Fontsize', title_FS)
 
+% % Save - to avoid font resizing in colorbar
+% saveas(gcf, 'Plots/03_paper/starfish_outbreak_map_histogram.png')
+
 
 
 %% CORAL COVER MAP ========================================================
@@ -1211,7 +1218,7 @@ legend('100\% effort over 1737.1 $km^2$', '50\% effort over 3474.2 $km^2$', ...
     'Interpreter', 'Latex', 'Fontsize', legend_FS, 'Location', 'SouthEast');
 
 % % Save - to avoid font resizing in colorbar
-% saveas(gcf, 'Plots/04_comparisons/best_coral_cover_increase.png')
+% saveas(gcf, 'Plots/03_paper/coral_cover_increase_map_histogram_all.png')
 
 
 % Plot of coral cover increase (best scenario only) -----------------------
@@ -1249,7 +1256,6 @@ h5 = histogram(lat_s1_1_percent, 40, 'Orientation', 'horizontal');
 h5.BinWidth = 0.35;
 set(gca, 'FontSize', ticks_FS)
 sp4.Position = [0.6 0.08 0.35 0.84];
-% xlim([0 35])
 ylim([-25, -10])
 xlabel('No. of reefs with $\geq 1\%$ coral cover increase', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
 ylabel('Latitude', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
@@ -1259,7 +1265,7 @@ title({'Latitudinal spread of reefs with at least 1\%', ...
 
 
 % % Save - to avoid font resizing in colorbar
-% saveas(gcf, 'Plots/04_comparisons/best_coral_cover_increase.png')
+% saveas(gcf, 'Plots/03_paper/coral_cover_increase_map_histogram_scenario1.png')
 
 
 %% CONTROL EFFORT =========================================================
@@ -1304,7 +1310,7 @@ c.Label.Interpreter = 'Latex';
 c.Label.FontSize = 14;
 
 % % Save - to avoid font resizing in colorbar
-% saveas(gcf, 'Plots/Manuscript/control_effort_compare.png')
+% saveas(gcf, 'Plots/03_paper/control_effort_compare.png')
 
 % % Control effort heatmaps (simple) ----------------------------------------
 % figure(34), clf, hold on, box on

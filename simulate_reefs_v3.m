@@ -49,6 +49,7 @@ r_c = params.r_c;               % coral larvae production rate
 r_s = params.r_s;               % starfish larvae production rate
 omega_c = params.omega_c;       % coral larvae connectivity matrix
 omega_s = params.omega_s;       % starfish larvae connectivity matrix
+mu_s = params.mu_s;             % % of age 1 COTS that reproduce
 lon = params.lon;               % longitude coordinates of each reef
 lat = params.lat;               % latitude coordinates of each reef
 
@@ -136,7 +137,7 @@ for t = t_0+1:t_end
 %                 tau(i, t) = tau(i, t) + omega_s(j, i) * N_y_2(j, t) * r_s;
                 % Allow some proportion of age 1 starfish to reproduce
                 tau(i, t) = tau(i, t) + omega_s(j, i) * r_s ...
-                    * (N_y_2(j, t) + 0.1 * N_y_1(j, t));
+                    * (N_y_2(j, t) + mu_s * N_y_1(j, t));
             end
 
             % Calculate starfish larval recruitment ratio for initiation box
