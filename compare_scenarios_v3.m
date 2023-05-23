@@ -34,11 +34,13 @@ params.K_f = reef_area;         % carrying capacity of fast-growing coral
 % Estimated by Morello et al. (2014)
 params.p_tilde = 0.258;         % effect of fast-growing coral on COTS     
 params.M_cots = 2.56;           % natural mortality of COTS 
+% Need to convert units from Morello's paper where p_1_f = 0.129
 params.p_1_f = ...
     (0.129/2500)*params.K_f;    % effect of COTS on fast-growing coral
 
 % Known or arbitrarily chosen by Morello et al. (2014)
 params.r_f = 0.5;               % intrinsic growth rate of fast-growing coral
+% Need to convert units from Morello's paper where p_2_f = 10
 params.p_2_f = ...
     (10/2500)*params.K_f;       % effect of COTS on fast-growing coral
 
@@ -52,7 +54,7 @@ params.mu_s = calculate_cots_age1_reproduction();
 
 % Connectivity matrices from Bode et al. (2012)
 V_f = 0.9;                      % coral larval survival rate
-V_s = 0.25;                      % starfish larval survival rate
+V_s = 0.25;                     % starfish larval survival rate
 params.omega_c = V_f*omega;     % coral larval dispersal
 params.omega_s = V_s*omega;     % starfish larval dispersal
 
