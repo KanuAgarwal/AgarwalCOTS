@@ -1499,7 +1499,7 @@ for i = 1:num_reefs
     end
 end 
 % Draw rectangle around the initiation box
-pi = plot([144 148 148 144 144], [-17 -17 -14.75 -14.75 -17], '-.', 'LineWidth', 1.2, 'Color', 'k');
+plot([144 148 148 144 144], [-17 -17 -14.75 -14.75 -17], 'Linewidth', 1.5, 'Color', 'k')
 % Focus the figure on GBR and QLD
 xlim([140, 155])
 ylim([-25, -10])
@@ -1508,5 +1508,3 @@ set(gca, 'FontSize', ticks_FS, 'BoxStyle', 'Full');
 xlabel('Longitude', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
 ylabel('Latitude', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
 title('COTS Initiation Box on GBR', 'Interpreter', 'Latex', 'Fontsize', title_FS)
-legend([pi, pr], {'Initiation Box', 'Initiation Box Reefs'}, 'Interpreter', 'Latex', ...
-    'Fontsize', legend_FS, 'Location', 'NorthEast');

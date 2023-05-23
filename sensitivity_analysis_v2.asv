@@ -712,14 +712,14 @@ scatter(initial_starfish_vals, scenario_4_coral, 100, colour_scheme(4, :), 'fill
 set(gca, 'FontSize', ticks_FS);
 ylim([3300 3600])
 set(gca, 'YTick', 3300:100:3600);
-xlabel('Initial no. of adult (age 2+) COTS', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
+xlabel('Initial no. of adult starfish', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
 ylabel('Total coral cover ($km^2$)', 'Interpreter', 'Latex', ...
     'Fontsize', axis_FS)
-title('\qquad\qquad\qquad\qquad\qquad Total coral cover on GBR after 100 years for varying initial no. of adult COTS', ...
+title('\qquad\qquad\qquad\qquad\qquad Total coral cover on GBR after 100 years for varying initial no. of adult starfish', ...
     'Interpreter', 'Latex', 'Fontsize', title_FS)
 legend('No control', '100\% effort over 1737.1 $km^2$', '50\% effort over 3474.2 $km^2$', ...
     '25\% effort over 6948.4 $km^2$', '12.2\% effort over 14240 $km^2$',  ...
     'Location', 'NorthEastOutside', 'Interpreter', 'Latex', 'Fontsize', legend_FS)
 
 % Save - to avoid font resizing in colorbar
-saveas(gcf, 'Plots/03_paper/sensitivity_analysis_v2.png')
+saveas(gcf, 'Plots/03_paper/control_effort_compare.png')
