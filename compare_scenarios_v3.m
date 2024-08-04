@@ -1253,7 +1253,7 @@ sp1 = subplot(1, 2, 1); hold on, box on
 % Plot outline of Australia
 pt = patch(Outline(:, 1), Outline(:, 2), [1 1 1], 'FaceColor', [0.8 0.8 0.8]);
 % Plot reef locations by color depending on initial cots numbers
-scatter(lon, lat, 12, coral_s1_compare, 'filled')
+scatter(lon, lat, 12, coral_s2_compare, 'filled')
 % Focus the figure on GBR and QLD
 xlim([140, 155])
 ylim([-25, -10])
@@ -1262,8 +1262,8 @@ sp1.Position = [0.07 0.08 0.43 0.84];
 set(gca, 'FontSize', ticks_FS, 'BoxStyle', 'Full');
 xlabel('Longitude', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
 ylabel('Latitude', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
-title({['Coral cover increase after ', num2str(t_end), ' years with 100\% effort'], ...
-    'over 1737.1 $km^2$ compared to no control'}, ...
+title({['Coral cover increase after ', num2str(t_end), ' years with 50\% effort'], ...
+    'over 3474.2 $km^2$ compared to no control'}, ...
     'Interpreter', 'Latex', 'Fontsize', title_FS)
 % Add colorbar
 c = colorbar;
@@ -1358,7 +1358,7 @@ legend('100\% effort over 1737.1 $km^2$', '50\% effort over 3474.2 $km^2$', ...
     'Interpreter', 'Latex', 'Fontsize', legend_FS, 'Location', 'SouthEast');
 
 % % Save - to avoid font resizing in colorbar
-% saveas(gcf, 'Plots/03_paper/coral_cover_increase_map_histogram_all.png')
+% saveas(gcf, 'Plots/03_paper/coral_cover_increase_50p_map_histogram_all.png')
 
 
 % Plot of coral cover increase (best scenario only) -----------------------
@@ -1445,12 +1445,12 @@ end
 % Add colorbar
 c = colorbar;
 c.Position = [0.88 0.11 0.02 0.815];
-c.Label.String = 'Percentage of adult (age 2+) COTS culled ($k_{i,t}$)';
+c.Label.String = 'Proportion of adult (age 2+) COTS culled ($k_{i,t}$)';
 c.Label.Interpreter = 'Latex';
 c.Label.FontSize = 14;
 
-% Save - to avoid font resizing in colorbar
-saveas(gcf, 'Plots/03_paper/control_effort_compare.png')
+% % Save - to avoid font resizing in colorbar
+% saveas(gcf, 'Plots/03_paper/control_effort_compare.png')
 
 % % Control effort heatmaps (simple) ----------------------------------------
 % figure(34), clf, hold on, box on
