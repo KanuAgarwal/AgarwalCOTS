@@ -1,4 +1,4 @@
-# Maths Honours Code
+# Optimising crown-of-thorns starfish control effort on the Great Barrier Reef
 
 ## Repository Structure
 All .m files within the main repository are the main [MATLAB code files](https://github.com/KanuAgarwal/MathsHonoursCode#matlab-code-files). The following is a list of all folders within the repository
