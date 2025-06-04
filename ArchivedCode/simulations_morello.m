@@ -30,7 +30,7 @@ params.p_2_f = 10/2500;         % effect of COTS on fast-growing coral
 % Below values not required - but need to enter for function to run
 params.r_c = 0;                 % coral larvae reproduction rate
 params.r_s = 0;                 % starfish larvae reproduction rate
-params.omega_c = 0;             % coral connectivity matric
+params.omega_c = 0;             % coral connectivity matrix
 params.omega_s = 0;             % starfish connectivity matrix
 params.lon = 0;                 % reef longitude coordinates
 params.lat = 0;                 % reef latitutde coordinates

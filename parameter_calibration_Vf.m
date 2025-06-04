@@ -50,12 +50,6 @@ params.r_s = 5000;              % starfish larvae reproduction rate
 % calculated from Lucas (1984) and Babcock et al. (2016)
 params.mu_s = calculate_cots_age1_reproduction();     
 
-% Connectivity matrices from Bode et al. (2012)
-V_f = 0.9;                      % coral larval survival rate
-V_s = 0.25;                      % starfish larval survival rate
-params.omega_c = V_f*omega;     % coral larval dispersal
-params.omega_s = V_s*omega;     % starfish larval dispersal
-
 % Latitude and longitude for starfish larval calculation
 params.lon = lon;
 params.lat = lat;
@@ -80,6 +74,23 @@ for i = 1:num_reefs
         coral_box_cc = coral_box_cc + reef_area(i);
     end
 end
+
+% STARFISH
+% Number of age 2+ COTS
+initial_state.N_0_2 = zeros(num_reefs, 1);
+
+% Look for reefs within the initiation box, and put some starfish there
+for i = 1:num_reefs
+    if (lat(i) > -17 && lat(i) < -14.75) && (lon(i) > 145 && lon(i) < 147)
+        initial_state.N_0_2(i) = 100;
+    end
+end
+
+% Initialise age 1 and 0 COTS based on modified Morello initial conditions
+initial_state.N_0_1 = initial_state.N_0_2 .* exp(params.M_cots * (1 ...
+    - params.p_tilde * (initial_state.C_0_f ./ (1 + initial_state.C_0_f))));
+initial_state.N_0_0 = initial_state.N_0_2 .* exp(2 * params.M_cots * (1 ...
+    - params.p_tilde * (initial_state.C_0_f ./ (1 + initial_state.C_0_f))));
 
 
 % EXPORT DATA -------------------------------------------------------------
@@ -132,24 +143,13 @@ effort_per_reef = effort_per_year / coral_GBR_cc;
 control_effort_s4 = effort_per_reef * ones(num_reefs, t_end);
 
 
-%% CASE 1: 5 COTS AT EACH REEF ============================================
-% INITIAL SYSTEM STATE ----------------------------------------------------
-% STARFISH
-% Number of COTS aged 2+
-initial_state.N_0_2 = zeros(num_reefs, 1);
-
-% Look for reefs within the initiation box, and put some starfish there
-for i = 1:num_reefs
-    if (lat(i) > -17 && lat(i) < -14.75) && (lon(i) > 145 && lon(i) < 147)
-        initial_state.N_0_2(i) = 5;
-    end
-end
-
-% Initialise age 1 and 0 COTS based on modified Morello initial conditions
-initial_state.N_0_1 = initial_state.N_0_2 .* exp(params.M_cots * (1 ...
-    - params.p_tilde * (initial_state.C_0_f ./ (1 + initial_state.C_0_f))));
-initial_state.N_0_0 = initial_state.N_0_2 .* exp(2 * params.M_cots * (1 ...
-    - params.p_tilde * (initial_state.C_0_f ./ (1 + initial_state.C_0_f))));
+%% CASE 1 =================================================================
+% CHANGE LARVAL SURVIVAL PARAMATERS ---------------------------------------
+% Connectivity matrices from Bode et al. (2012)
+V_f = 0.3;                      % coral larval survival rate
+V_s = 0.1;                      % starfish larval survival rate
+params.omega_c = V_f*omega;     % coral larval dispersal
+params.omega_s = V_s*omega;     % starfish larval dispersal
 
 
 % CONTROL SCENARIO 0 ------------------------------------------------------
@@ -242,24 +242,13 @@ starfish_age0_c1_s4 = sum(N_y_0_c1_s4, 1);
     calculate_population_box(t_end, C_y_f_c1_s4, N_y_2_c1_s4, N_y_1_c1_s4, N_y_0_c1_s4, num_reefs, lon, lat);
 
 
-%% CASE 2: 10 COTS AT EACH REEF ===========================================
-% INITIAL SYSTEM STATE ----------------------------------------------------
-% STARFISH
-% Number of COTS aged 2+
-initial_state.N_0_2 = zeros(num_reefs, 1);
-
-% Look for reefs within the initiation box, and put some starfish there
-for i = 1:num_reefs
-    if (lat(i) > -17 && lat(i) < -14.75) && (lon(i) > 145 && lon(i) < 147)
-        initial_state.N_0_2(i) = 10;
-    end
-end
-
-% Initialise age 1 and 0 COTS based on modified Morello initial conditions
-initial_state.N_0_1 = initial_state.N_0_2 .* exp(params.M_cots * (1 ...
-    - params.p_tilde * (initial_state.C_0_f ./ (1 + initial_state.C_0_f))));
-initial_state.N_0_0 = initial_state.N_0_2 .* exp(2 * params.M_cots * (1 ...
-    - params.p_tilde * (initial_state.C_0_f ./ (1 + initial_state.C_0_f))));
+%% CASE 2 =================================================================
+% CHANGE LARVAL SURVIVAL PARAMATERS ---------------------------------------
+% Connectivity matrices from Bode et al. (2012)
+V_f = 0.5;                      % coral larval survival rate
+V_s = 0.25;                      % starfish larval survival rate
+params.omega_c = V_f*omega;     % coral larval dispersal
+params.omega_s = V_s*omega;     % starfish larval dispersal
 
 
 % CONTROL SCENARIO 0 ------------------------------------------------------
@@ -352,24 +341,14 @@ starfish_age0_c2_s4 = sum(N_y_0_c2_s4, 1);
     calculate_population_box(t_end, C_y_f_c2_s4, N_y_2_c2_s4, N_y_1_c2_s4, N_y_0_c2_s4, num_reefs, lon, lat);
 
 
-%% CASE 3: 25 COTS AT EACH REEF ===========================================
-% INITIAL SYSTEM STATE ----------------------------------------------------
-% STARFISH
-% Number of COTS aged 2+
-initial_state.N_0_2 = zeros(num_reefs, 1);
 
-% Look for reefs within the initiation box, and put some starfish there
-for i = 1:num_reefs
-    if (lat(i) > -17 && lat(i) < -14.75) && (lon(i) > 145 && lon(i) < 147)
-        initial_state.N_0_2(i) = 25;
-    end
-end
-
-% Initialise age 1 and 0 COTS based on modified Morello initial conditions
-initial_state.N_0_1 = initial_state.N_0_2 .* exp(params.M_cots * (1 ...
-    - params.p_tilde * (initial_state.C_0_f ./ (1 + initial_state.C_0_f))));
-initial_state.N_0_0 = initial_state.N_0_2 .* exp(2 * params.M_cots * (1 ...
-    - params.p_tilde * (initial_state.C_0_f ./ (1 + initial_state.C_0_f))));
+%% CASE 3 =================================================================
+% CHANGE LARVAL SURVIVAL PARAMATERS ---------------------------------------
+% Connectivity matrices from Bode et al. (2012)
+V_f = 0.7;                      % coral larval survival rate
+V_s = 0.5;                      % starfish larval survival rate
+params.omega_c = V_f*omega;     % coral larval dispersal
+params.omega_s = V_s*omega;     % starfish larval dispersal
 
 
 % CONTROL SCENARIO 0 ------------------------------------------------------
@@ -462,25 +441,13 @@ starfish_age0_c3_s4 = sum(N_y_0_c3_s4, 1);
     calculate_population_box(t_end, C_y_f_c3_s4, N_y_2_c3_s4, N_y_1_c3_s4, N_y_0_c3_s4, num_reefs, lon, lat);
 
 
-%% CASE 4: 50 COTS AT EACH REEF ===========================================
-% INITIAL SYSTEM STATE ----------------------------------------------------
-% STARFISH
-% Number of age 2+ COTS
-initial_state.N_0_2 = zeros(num_reefs, 1);
-
-% Look for reefs within the initiation box, and put some starfish there
-for i = 1:num_reefs
-    if (lat(i) > -17 && lat(i) < -14.75) && (lon(i) > 145 && lon(i) < 147)
-        initial_state.N_0_2(i) = 50;
-    end
-end
-
-% Initialise age 1 and 0 COTS based on modified Morello initial conditions
-initial_state.N_0_1 = initial_state.N_0_2 .* exp(params.M_cots * (1 ...
-    - params.p_tilde * (initial_state.C_0_f ./ (1 + initial_state.C_0_f))));
-initial_state.N_0_0 = initial_state.N_0_2 .* exp(2 * params.M_cots * (1 ...
-    - params.p_tilde * (initial_state.C_0_f ./ (1 + initial_state.C_0_f))));
-
+%% CASE 4 =================================================================
+% CHANGE LARVAL SURVIVAL PARAMATERS ---------------------------------------
+% Connectivity matrices from Bode et al. (2012)
+V_f = 0.9;                      % coral larval survival rate
+V_s = 0.75;                      % starfish larval survival rate
+params.omega_c = V_f*omega;     % coral larval dispersal
+params.omega_s = V_s*omega;     % starfish larval dispersal
 
 % CONTROL SCENARIO 0 ------------------------------------------------------
 % SOLVE 
@@ -572,24 +539,13 @@ starfish_age0_c4_s4 = sum(N_y_0_c4_s4, 1);
     calculate_population_box(t_end, C_y_f_c4_s4, N_y_2_c4_s4, N_y_1_c4_s4, N_y_0_c4_s4, num_reefs, lon, lat);
 
 
-%% CASE 5: 100 COTS AT EACH REEF ==========================================
-% INITIAL SYSTEM STATE ----------------------------------------------------
-% STARFISH
-% Number of age 2+ COTS
-initial_state.N_0_2 = zeros(num_reefs, 1);
-
-% Look for reefs within the initiation box, and put some starfish there
-for i = 1:num_reefs
-    if (lat(i) > -17 && lat(i) < -14.75) && (lon(i) > 145 && lon(i) < 147)
-        initial_state.N_0_2(i) = 100;
-    end
-end
-
-% Initialise age 1 and 0 COTS based on modified Morello initial conditions
-initial_state.N_0_1 = initial_state.N_0_2 .* exp(params.M_cots * (1 ...
-    - params.p_tilde * (initial_state.C_0_f ./ (1 + initial_state.C_0_f))));
-initial_state.N_0_0 = initial_state.N_0_2 .* exp(2 * params.M_cots * (1 ...
-    - params.p_tilde * (initial_state.C_0_f ./ (1 + initial_state.C_0_f))));
+%% CASE 5 =================================================================
+% CHANGE LARVAL SURVIVAL PARAMATERS ---------------------------------------
+% Connectivity matrices from Bode et al. (2012)
+V_f = 0.9;                      % coral larval survival rate
+V_s = 1;                      % starfish larval survival rate
+params.omega_c = V_f*omega;     % coral larval dispersal
+params.omega_s = V_s*omega;     % starfish larval dispersal
 
 
 % CONTROL SCENARIO 0 ------------------------------------------------------
@@ -694,8 +650,8 @@ ticks_FS = 12;
 colour_scheme = cbrewer('div', 'RdBu', 4);
 
 % Collate all the data for plotting
-initial_starfish_vals = categorical({'5', '10', '25', '50', '100'});
-initial_starfish_vals = reordercats(initial_starfish_vals, {'5', '10', '25', '50', '100'});
+initial_Vf_vals = categorical({'0.1', '0.25', '0.5', '0.75', '1'});
+initial_Vf_vals = reordercats(initial_Vf_vals, {'0.1', '0.25', '0.5', '0.75', '1'});
 scenario_0_coral = [coral_c1_s0(end) coral_c2_s0(end) coral_c3_s0(end) coral_c4_s0(end) coral_c5_s0(end)];
 scenario_1_coral = [coral_c1_s1(end) coral_c2_s1(end) coral_c3_s1(end) coral_c4_s1(end) coral_c5_s1(end)];
 scenario_2_coral = [coral_c1_s2(end) coral_c2_s2(end) coral_c3_s2(end) coral_c4_s2(end) coral_c5_s2(end)];
@@ -703,23 +659,23 @@ scenario_3_coral = [coral_c1_s3(end) coral_c2_s3(end) coral_c3_s3(end) coral_c4_
 scenario_4_coral = [coral_c1_s4(end) coral_c2_s4(end) coral_c3_s4(end) coral_c4_s4(end) coral_c5_s4(end)];
 
 % Plot final coral cover for all scenarios against number of initial adult starfish
-figure(10), clf, hold on
-scatter(initial_starfish_vals, scenario_0_coral, 100, 'black', 'filled')
-scatter(initial_starfish_vals, scenario_1_coral, 100, colour_scheme(1, :), 'filled')
-scatter(initial_starfish_vals, scenario_2_coral, 100, colour_scheme(2, :), 'filled')
-scatter(initial_starfish_vals, scenario_3_coral, 100, colour_scheme(3, :), 'filled')
-scatter(initial_starfish_vals, scenario_4_coral, 100, colour_scheme(4, :), 'filled')
+figure(11), clf, hold on
+scatter(initial_Vf_vals, scenario_0_coral, 100, 'black', 'filled')
+scatter(initial_Vf_vals, scenario_1_coral, 100, colour_scheme(1, :), 'filled')
+scatter(initial_Vf_vals, scenario_2_coral, 100, colour_scheme(2, :), 'filled')
+scatter(initial_Vf_vals, scenario_3_coral, 100, colour_scheme(3, :), 'filled')
+scatter(initial_Vf_vals, scenario_4_coral, 100, colour_scheme(4, :), 'filled')
 set(gca, 'FontSize', ticks_FS);
-ylim([3300 3600])
-set(gca, 'YTick', 3300:100:3600);
-xlabel('Initial no. of adult (age 2+) COTS', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
+% ylim([3300 3600])
+% set(gca, 'YTick', 3300:100:3600);
+xlabel('$V_f$', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
 ylabel('Total coral cover ($km^2$)', 'Interpreter', 'Latex', ...
     'Fontsize', axis_FS)
-title('\qquad\qquad\qquad\qquad\qquad Total coral cover on GBR after 100 years for varying initial no. of adult COTS', ...
+title('\qquad\qquad\qquad\qquad\qquad Total coral cover on GBR after 100 years for varying $V_f$', ...
     'Interpreter', 'Latex', 'Fontsize', title_FS)
 legend('No control', '100\% effort over 1737.1 $km^2$', '50\% effort over 3474.2 $km^2$', ...
     '25\% effort over 6948.4 $km^2$', '12.2\% effort over 14240 $km^2$',  ...
     'Location', 'NorthEastOutside', 'Interpreter', 'Latex', 'Fontsize', legend_FS)
 
 % Save - to avoid font resizing in colorbar
-saveas(gcf, 'Plots/03_paper/sensitivity_analysis_v2.png')
+saveas(gcf, 'Plots/03_paper/V_f_parameter_calibration.png')

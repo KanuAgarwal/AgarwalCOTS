@@ -44,7 +44,7 @@ params.r_f = 0.5;               % intrinsic growth rate of fast-growing coral
 params.p_2_f = ...
     (10/2500)*params.K_f;       % effect of COTS on fast-growing coral
 
-% Arbitrarily chosen by me
+% Arbitrarily chosen 
 params.r_c = 0.1;               % coral larvae reproduction rate
 params.r_s = 5000;              % starfish larvae reproduction rate
 
@@ -1064,7 +1064,7 @@ title({'Latitudinal spread of reefs with at least 500 ', ...
 %     'Interpreter', 'Latex', 'Fontsize', legend_FS, 'Location', 'SouthEast');
 
 % Save - to avoid font resizing in colorbar
-saveas(gcf, 'Plots/03_paper/starfish_outbreak_map_histogram.png')
+% saveas(gcf, 'Plots/03_paper/starfish_outbreak_map_histogram.png')
 
 
 
@@ -1410,44 +1410,44 @@ title({'Latitudinal spread of reefs with at least 1\%', ...
 
 %% CONTROL EFFORT =========================================================
 % Control effort heatmaps -------------------------------------------------
-figure(34), clf, hold on, box on
-label_strings = {'(a) 100\% effort over 1737.1 $km^2$', '(b) 50\% effort over 3474.2 $km^2$', ...
-    '(c) 25\% effort over 6948.4 $km^2$', '(d) 12.2\% effort over 14240 $km^2$'};
-for i = 1:size(control_plot, 2)
-    sp = subplot(2, 2, i); hold on, box on
-    % Plot outline of Australia
-    pt = patch(Outline(:, 1), Outline(:, 2), [1 1 1], 'FaceColor', [0.8 0.8 0.8]);
-    % Plot reef locations by color depending on control effort
-    scatter(lon, lat, 10, control_plot(:, i), 'filled')
-    colorbar off
-    colormap parula
-    caxis([0 1])
-    % Focus the figure on GBR and QLD
-    xlim([140, 155])
-    ylim([-25, -10])
-    set(gca, 'YTick', -25:5:-10);
-    % Add labels
-    set(gca, 'BoxStyle', 'Full');
-    xlabel(label_strings(i), 'Interpreter', 'Latex', 'Fontsize', axis_FS-2)
-    title(['Control scenario ', num2str(i)], 'Interpreter', 'Latex', 'Fontsize', title_FS-3)
-    % Positioning
-    if i == 1
-        sp.Position = [0.07 0.58 0.33 0.35];
-    elseif i == 2
-        sp.Position = [0.5 0.58 0.33 0.35];
-    elseif i == 3
-        sp.Position = [0.07 0.11 0.33 0.35];
-    elseif i == 4
-        sp.Position = [0.5 0.11 0.33 0.35];
-    end
-end
-
-% Add colorbar
-c = colorbar;
-c.Position = [0.88 0.11 0.02 0.815];
-c.Label.String = 'Proportion of adult (age 2+) COTS culled ($k_{i,t}$)';
-c.Label.Interpreter = 'Latex';
-c.Label.FontSize = 14;
+% figure(34), clf, hold on, box on
+% label_strings = {'(a) 100\% effort over 1737.1 $km^2$', '(b) 50\% effort over 3474.2 $km^2$', ...
+%     '(c) 25\% effort over 6948.4 $km^2$', '(d) 12.2\% effort over 14240 $km^2$'};
+% for i = 1:size(control_plot, 2)
+%     sp = subplot(2, 2, i); hold on, box on
+%     % Plot outline of Australia
+%     pt = patch(Outline(:, 1), Outline(:, 2), [1 1 1], 'FaceColor', [0.8 0.8 0.8]);
+%     % Plot reef locations by color depending on control effort
+%     scatter(lon, lat, 10, control_plot(:, i), 'filled')
+%     colorbar off
+%     colormap parula
+%     caxis([0 1])
+%     % Focus the figure on GBR and QLD
+%     xlim([140, 155])
+%     ylim([-25, -10])
+%     set(gca, 'YTick', -25:5:-10);
+%     % Add labels
+%     set(gca, 'BoxStyle', 'Full');
+%     xlabel(label_strings(i), 'Interpreter', 'Latex', 'Fontsize', axis_FS-2)
+%     title(['Control scenario ', num2str(i)], 'Interpreter', 'Latex', 'Fontsize', title_FS-3)
+%     % Positioning
+%     if i == 1
+%         sp.Position = [0.07 0.58 0.33 0.35];
+%     elseif i == 2
+%         sp.Position = [0.5 0.58 0.33 0.35];
+%     elseif i == 3
+%         sp.Position = [0.07 0.11 0.33 0.35];
+%     elseif i == 4
+%         sp.Position = [0.5 0.11 0.33 0.35];
+%     end
+% end
+% 
+% % Add colorbar
+% c = colorbar;
+% c.Position = [0.88 0.11 0.02 0.815];
+% c.Label.String = 'Proportion of adult (age 2+) COTS culled ($k_{i,t}$)';
+% c.Label.Interpreter = 'Latex';
+% c.Label.FontSize = 14;
 
 % % Save - to avoid font resizing in colorbar
 % saveas(gcf, 'Plots/03_paper/control_effort_compare.png')
@@ -1489,26 +1489,26 @@ c.Label.FontSize = 14;
 
 %% INITIATION BOX =========================================================
 % Map of GBR with initiation box ------------------------------------------
-figure(35), clf, hold on, box on
-% Plot outline of Australia
-pt = patch(Outline(:, 1), Outline(:, 2), [1 1 1], 'FaceColor', [0.8 0.8 0.8]);
-% Plot reef locations by color depending on initiation box
-for i = 1:num_reefs
-    if (lat(i) > -17 && lat(i) < -14.75) && (lon(i) > 145 && lon(i) < 147)
-        pr = scatter(lon(i), lat(i), 10, colour_scheme(1, :), 'filled');
-    else
-        pb = scatter(lon(i), lat(i), 10, colour_scheme(4, :), 'filled');
-    end
-end 
-% Draw rectangle around the initiation box
-pi = plot([144 148 148 144 144], [-17 -17 -14.75 -14.75 -17], '-.', 'LineWidth', 1.2, 'Color', 'k');
-% Focus the figure on GBR and QLD
-xlim([140, 155])
-ylim([-25, -10])
-% Add labels
-set(gca, 'FontSize', ticks_FS, 'BoxStyle', 'Full');
-xlabel('Longitude', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
-ylabel('Latitude', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
-title('COTS Initiation Box on GBR', 'Interpreter', 'Latex', 'Fontsize', title_FS)
-legend([pi, pr], {'Initiation Box', 'Initiation Box Reefs'}, 'Interpreter', 'Latex', ...
-    'Fontsize', legend_FS, 'Location', 'NorthEast');
+% figure(35), clf, hold on, box on
+% % Plot outline of Australia
+% pt = patch(Outline(:, 1), Outline(:, 2), [1 1 1], 'FaceColor', [0.8 0.8 0.8]);
+% % Plot reef locations by color depending on initiation box
+% for i = 1:num_reefs
+%     if (lat(i) > -17 && lat(i) < -14.75) && (lon(i) > 145 && lon(i) < 147)
+%         pr = scatter(lon(i), lat(i), 10, colour_scheme(1, :), 'filled');
+%     else
+%         pb = scatter(lon(i), lat(i), 10, colour_scheme(4, :), 'filled');
+%     end
+% end 
+% % Draw rectangle around the initiation box
+% pi = plot([144 148 148 144 144], [-17 -17 -14.75 -14.75 -17], '-.', 'LineWidth', 1.2, 'Color', 'k');
+% % Focus the figure on GBR and QLD
+% xlim([140, 155])
+% ylim([-25, -10])
+% % Add labels
+% set(gca, 'FontSize', ticks_FS, 'BoxStyle', 'Full');
+% xlabel('Longitude', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
+% ylabel('Latitude', 'Interpreter', 'Latex', 'Fontsize', axis_FS)
+% title('COTS Initiation Box on GBR', 'Interpreter', 'Latex', 'Fontsize', title_FS)
+% legend([pi, pr], {'Initiation Box', 'Initiation Box Reefs'}, 'Interpreter', 'Latex', ...
+%     'Fontsize', legend_FS, 'Location', 'NorthEast');
